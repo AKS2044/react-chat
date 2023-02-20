@@ -1,0 +1,30 @@
+@import "/src/colors";
+
+.menu{
+    width: 300px;
+    height: 100vmax;
+    border-right: 1px solid $header;
+    &__person{
+        padding: 0 5px;
+        margin-bottom: 1px;
+        display: flex;
+        align-items: center;
+        height: 64px;
+        background-color: $color2;
+        &:hover{
+            background-color: $color2__hover;
+        }
+        &__photo{
+            width: 48px;
+            height: 48px;
+            margin-right: 10px;
+        }
+        &__nick{
+            font-size: 1.2rem;
+        }
+        &__online{
+            font-size: 0.7rem;
+            font-weight: 300;
+        }
+    }
+}

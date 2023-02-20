@@ -1,0 +1,35 @@
+@import "/src/colors";
+
+.container{
+    overflow: hidden auto;
+    //padding: 30px;
+}
+
+.block{
+    display: flex;
+    margin: 20px;
+    &__photo{
+        width: 48px;
+        height: 48px;
+    }
+    &__message{
+        margin: 0 10px;
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 10px;
+        border-radius: 12px;
+        min-width: 200px;
+        max-width: 66%;
+        min-height: 50px;
+        background-color: $color2;
+        &__text{
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        &__date{
+            font-size: 0.8rem;
+            font-weight: 300;
+        }
+    }
+}
