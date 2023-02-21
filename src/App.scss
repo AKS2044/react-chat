@@ -19,6 +19,14 @@ a{
   text-decoration: none;
 }
 
+button{
+  border-style: solid;
+}
+textarea{
+  outline: none;
+}
+
 .container{
+  height: 100%;
   display: flex;
 }

@@ -1,6 +1,9 @@
 @import "/src/colors";
 
 .header{
+    position: fixed;
+    top: 0;
+    z-index: 100;
     display: flex;
     align-items: center;
     padding: 0 50px;
@@ -21,6 +24,16 @@
         &__welcome{
             font-size: 1.4rem;
             font-weight: 300;
+            &__profile{
+                border: 1px solid white;
+                border-radius: 12px;
+                padding: 5px;
+                &:hover{
+                    transition: all 0.2s linear;
+                    background-color: white;
+                    color: $background;
+                }
+            }
         }
         &__logout{
             cursor: pointer;

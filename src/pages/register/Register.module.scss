@@ -1,0 +1,41 @@
+@import "/src/colors";
+
+.login{
+    height: 80vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    &__title{
+        font-size: 3rem;
+        font-weight: 300;
+        margin-bottom: 20px;
+    }
+    &__form{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        width: 400px;
+        height: 550px;
+        padding: 40px;
+        border: 1px solid $header;
+        border-radius: 12px;
+        &__text{
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 20px;
+        }
+        &__reg{
+            margin: 20px 0 0 0;
+            font-weight: 300; 
+            &__link{
+                text-decoration: underline;
+                &:hover{
+                    color: $header;
+                }
+            }
+        }
+    }
+}

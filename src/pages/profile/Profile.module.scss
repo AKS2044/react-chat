@@ -1,0 +1,99 @@
+@import "/src/colors";
+
+.container{
+    height: 80vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.profile{
+    position: relative;
+    display: flex;
+    width: 800px;
+    height: 500px;
+    border: 1px solid $header;
+    border-radius: 12px;
+    &__button{
+        position: absolute;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 1.2rem;
+        right: -115px;
+        top: 45px;
+        height: 40px;
+        border-radius: 0 12px 12px 0;
+        padding: 5px;
+        border: 3px solid $header;
+        &:hover{
+            background-color: $header;
+            transition: all 0.2s linear;
+        }
+    }
+    &__button2{
+        top: 88px;
+        right: -48px;
+    }
+    &__block{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        min-width: 300px;
+        border-right: 1px solid $header;
+        &__photo{
+            width: 184px;
+            height: 184px;
+        }
+        &__info{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid $header;
+            width: 100%;
+            padding: 10px 0;
+            &__text{
+                font-size: 1.1rem;
+            }
+        }
+    }
+    &__chat{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        &__title{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-top-right-radius: 9px;
+            font-size: 1.3rem;
+            height: 40px;
+            margin-bottom: 5px;
+            background-color: $header;
+        }
+        &__items{
+            &__item{
+                cursor: pointer;
+                padding: 5px 0;
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+                background-color: $color2;
+                &:hover{
+                    transition: all 0.2s linear;
+                    background-color: $color2__hover;
+                }
+                &__photo{
+                    width: 48px;
+                    height: 48px;
+                }
+                &__text{
+                    font-weight: 300;
+                }
+            }
+        }
+    }
+}

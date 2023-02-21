@@ -13,7 +13,7 @@ const Menu = () => {
     ]
     return (
         <div className={cl.menu}>
-            <div>
+            <div className={cl.menu__items}>
                 {persons.map((p, index) => 
                 <div key={index} className={cl.menu__person}>
                     <img src={p.photo} alt='' title='' className={cl.menu__person__photo} />
