@@ -1,10 +1,10 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import pizza from './pizza/slice'
+import auth from './Auth/slice'
 import { useDispatch } from 'react-redux';
 
 export const store = configureStore({
     reducer: {
-    pizza,
+        auth,
     },
 });
 

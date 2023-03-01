@@ -1,6 +1,20 @@
 import cl from './Main.module.scss';
 import photo from '../../images/photo2.png';
 import Button from '../../components/UI/button/Button';
+import { HubConnectionBuilder } from '@microsoft/signalr';
+import { useState, useEffect, useRef } from 'react';
+import { useForm } from 'react-hook-form';
+import { HubConnection } from '@microsoft/signalr/dist/esm/HubConnection';
+
+type MessageProps = {
+    user: string,
+    message: string
+}
+
+const defaultValues: MessageProps = {
+    user: 'thefan',
+    message: '',
+}
 
 const Main = () => {
     const message = [
@@ -11,6 +25,67 @@ const Main = () => {
         {photo: photo, message: 'Технически, однако, React - это библиотека JS, разработанная для создания пользовательских интерфейсов и их компонентов.', date: '20.02.2023 21:47'},
         {photo: photo, message: 'Технически, однако, React - это библиотека JS.', date: '20.02.2023 21:47'}
     ]
+
+    const { 
+        register, 
+        handleSubmit, 
+        formState: {}} = useForm({
+        defaultValues,
+        mode: 'onChange'
+    });
+
+    const [ connection, setConnection ] = useState<HubConnection>();
+    const [ chat, setChat ] = useState<MessageProps[]>([]);
+    const latestChat = useRef<MessageProps[]>([]);
+    const date = new Date();
+    
+    latestChat.current = chat;
+
+    useEffect(() => {
+        const newConnection = new HubConnectionBuilder()
+            .withUrl('https://localhost:44387/chat')
+            .withAutomaticReconnect()
+            .build();
+
+        setConnection(newConnection);
+    }, []);
+    
+    useEffect(() => {
+        if (connection) {
+            connection.start()
+                .then(() => {
+                    console.log('Connected!');
+                    
+                    connection.on('ReceiveMessage', message => {
+                        console.log(latestChat);
+                        const updatedChat: MessageProps[] = [...latestChat.current]; //ВОПРОСИКИ
+                        updatedChat.push(message);
+                        
+                        setChat(updatedChat);
+                    });
+                })
+                .catch(e => console.log('Connection failed: ', e));
+        }
+    }, [connection]);
+
+    const onSubmit = async (values: MessageProps) => {
+        const message: MessageProps = {
+            user: values.user,
+            message: values.message
+        }
+        
+        if (connection?.start) {
+            try {
+                await connection?.send('SendMessage', message);
+            }
+            catch(e) {
+                console.log(e);
+            }
+        }
+        else {
+            alert('No connection to server yet.');
+        }
+    }
     return (
         
         <div className={cl.container}>
@@ -30,20 +105,22 @@ const Main = () => {
                 </div>
                     <img src={m.photo} alt='Nickname' className={cl.block__photo} />
                 </div>)}
-            {message.map((m, i) => 
+            {chat?.map((m, i) => 
                 <div key={i} className={`${cl.block} ${cl.block__your}`}>
                 <div className={cl.block__message}>
                     <div className={cl.block__message__text}>{m.message}</div>
-                    <div className={cl.block__message__date}>{m.date}</div>
+                    <div className={cl.block__message__date}>12</div>
                 </div>
-                    <img src={m.photo} alt='Nickname' className={cl.block__photo} />
+                    <img src={photo} alt='Nickname' className={cl.block__photo} />
                 </div>)}
-                <div className={cl.text}>
+                <form onSubmit={handleSubmit(onSubmit)} className={cl.text}>
                     <div className={cl.text__block}>
-                        <textarea className={cl.text__block__textarea} />
+                        <textarea
+                        className={cl.text__block__textarea}
+                        {...register('message')} />
                         <Button>Send</Button>
                     </div>
-                </div>
+                </form>
         </div>
     );
 };

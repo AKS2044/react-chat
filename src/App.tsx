@@ -8,7 +8,6 @@ import Profile from './pages/profile/Profile';
 import Register from './pages/register/Register';
 
 function App() {
-  console.log("Loading")
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
