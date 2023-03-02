@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { Link, Navigate, useLocation } from 'react-router-dom';
 import Button from '../../components/UI/button/Button';
-import Input from '../../components/UI/input/Input';
 import { fetchLogin } from '../../redux/Auth/asyncActions';
 import { selectIsAuth, selectLoginData } from '../../redux/Auth/selectors';
 import { LoginParams } from '../../redux/Auth/types';
@@ -12,7 +11,6 @@ import instance from '../../axios';
 import cl from './Login.module.scss';
 import Alert from '../../components/UI/alert/Alert';
 import { TypeButton } from '../../enum/EnumButton';
-import { TextField } from '@mui/material';
 
 const defaultValues: LoginParams = {
     userName: '',
@@ -23,7 +21,7 @@ const defaultValues: LoginParams = {
 const Login = () => {
     const isAuth = useSelector(selectIsAuth);
     const location = useLocation();
-    const fromPage = location.state?.from?.pathname || '/';
+    const fromPage = location.state?.from?.pathname || '/profile';
     const dispatch = useAppDispatch();
 
     const { data, statusLogin, error } = useSelector(selectLoginData);
@@ -35,8 +33,7 @@ const Login = () => {
     });
     
     const onSubmit = async (values: LoginParams) => {
-        console.log(values)
-            await dispatch(fetchLogin(values));
+        await dispatch(fetchLogin(values));
     }
         
     if(data.token){
@@ -50,7 +47,7 @@ const Login = () => {
         }, [statusLogin]);
 
     if(isAuth){
-        return <Navigate to='/profile' />;
+        return <Navigate to={fromPage} />;
     }
     return (
         <div className={cl.login}>
@@ -60,23 +57,29 @@ const Login = () => {
                     </Alert>)}</>}
             <form onSubmit={handleSubmit(onSubmit)} className={cl.login__form}>
                 <div className={cl.login__form__text}>Log in</div>
-                <TextField
-                label="Login"
-                error={Boolean(errors.userName?.message)}
-                helperText={errors.userName?.message}
-                {...register('userName', {required: 'Write your login '})}  />
-                <TextField 
-                label="Password"
-                type="password"
-                error={Boolean(errors.password?.message)}
-                helperText={errors.password?.message}
-                autoComplete="on"
-                {...register('password', {required: 'Write your password'})} />
+                <input
+                className={cl.input}
+                placeholder='Login'
+                type='text'
+                {...register('userName', {required: 'Write your login'})}
+                />
+                {errors.userName?.message && <span className={cl.login__error}>{errors.userName?.message}</span>}
+                <input
+                className={cl.input}
+                placeholder='password'
+                type='password'
+                autoComplete='on'
+                {...register('password', {required: 'Write your password'})}
+                />
+                {errors.password?.message && <span className={cl.login__error}>{errors.password?.message}</span>}
                 <div className={cl.login__form__rem}>
                     <div>Remember me</div>
-                    <input type='checkbox' className={cl.login__form__rem__checkbox} />
+                    <input 
+                    type='checkbox' 
+                    className={cl.login__form__rem__checkbox}
+                    {...register('rememberMe')} />
                 </div>
-                <Button type={TypeButton.submit} disabled={false}>Log in</Button>
+                <Button type={TypeButton.submit} disabled={isValid} >Log in</Button>
                 <div className={cl.login__form__reg}>Registration: <Link to='/register' className={cl.login__form__reg__link}>Here</Link></div>
             </form>
         </div>

@@ -3,13 +3,20 @@ import cl from './Input.module.scss';
 type InputProps = {
     placeholder?: string,
     autoComplete?: string,
+    name?: string,
     type?: string,
-    value?: string
+    value?: string,
 };
 
 const Input = (props: InputProps) => {
     return (
-        <input value={props.value} autoComplete={props.autoComplete} placeholder={props.placeholder} type={props.type} className={cl.input} />
+        <input
+        name={props.name} 
+        value={props.value} 
+        autoComplete={props.autoComplete} 
+        placeholder={props.placeholder} 
+        type={props.type} 
+        className={cl.input} />
     );
 };
 

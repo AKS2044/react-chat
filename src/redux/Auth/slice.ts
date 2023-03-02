@@ -20,9 +20,6 @@ export const loginSlice = createSlice({
     name: 'login',
     initialState,
     reducers: {
-        logout: (state) => {
-            state.data = {} as LoginPayloadParams;
-        },
     },
     // fetchLogin builder
     extraReducers: (builder) => {
@@ -93,6 +90,6 @@ export const loginSlice = createSlice({
         },
 })
 
-export const { logout } = loginSlice.actions
+export const {  } = loginSlice.actions
 
 export default loginSlice.reducer

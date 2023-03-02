@@ -1,22 +1,30 @@
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 import './App.scss';
-import Layout from './components/Layout';
 import Login from './pages/login/Login';
 import Main from './pages/main/Main';
 import NotFound from './pages/notFound/NotFound';
 import Profile from './pages/profile/Profile';
 import Register from './pages/register/Register';
+import { fetchAuth } from './redux/Auth/asyncActions';
+import { selectLoginData } from './redux/Auth/selectors';
+import { useAppDispatch } from './redux/store';
 
 function App() {
+  const dispatch = useAppDispatch();
+  const { statusLogin, statusRegister, statusAuth } = useSelector(selectLoginData);
+  
+  useEffect(() => {
+    dispatch(fetchAuth());
+  }, [statusLogin, statusRegister] )
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Main />} />
-        <Route path="*" element={<NotFound />} />
-      </Route>
+      <Route index element={<Main />} />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
       <Route path='/profile' element={<Profile />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

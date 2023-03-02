@@ -20,19 +20,15 @@ export interface LoginParams {
 
 export interface ProfilePayloadParams {
     email: string,
-    city: string,
     userName: string,
     dateReg: string,
     roles: string[],
-    watchLater: number,
-    favourite: number,
     pathPhoto: string,
     photoName: string,
 }
 
 export interface RegisterParams {
     email: string,
-    city: string,
     userName: string,
     password: string,
     passwordConfirm: string,

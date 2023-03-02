@@ -5,6 +5,9 @@ import { HubConnectionBuilder } from '@microsoft/signalr';
 import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { HubConnection } from '@microsoft/signalr/dist/esm/HubConnection';
+import Header from '../../components/header/Header';
+import Menu from '../../components/menu/Menu';
+import { TypeButton } from '../../enum/EnumButton';
 
 type MessageProps = {
     user: string,
@@ -29,7 +32,7 @@ const Main = () => {
     const { 
         register, 
         handleSubmit, 
-        formState: {}} = useForm({
+        formState: {isValid}} = useForm({
         defaultValues,
         mode: 'onChange'
     });
@@ -43,7 +46,7 @@ const Main = () => {
 
     useEffect(() => {
         const newConnection = new HubConnectionBuilder()
-            .withUrl('https://localhost:44387/chat')
+            .withUrl('https://localhost:7275/chat')
             .withAutomaticReconnect()
             .build();
 
@@ -58,7 +61,7 @@ const Main = () => {
                     
                     connection.on('ReceiveMessage', message => {
                         console.log(latestChat);
-                        const updatedChat: MessageProps[] = [...latestChat.current]; //ВОПРОСИКИ
+                        const updatedChat: MessageProps[] = [...latestChat.current];
                         updatedChat.push(message);
                         
                         setChat(updatedChat);
@@ -73,7 +76,6 @@ const Main = () => {
             user: values.user,
             message: values.message
         }
-        
         if (connection?.start) {
             try {
                 await connection?.send('SendMessage', message);
@@ -81,47 +83,51 @@ const Main = () => {
             catch(e) {
                 console.log(e);
             }
-        }
-        else {
+        }else {
             alert('No connection to server yet.');
         }
     }
     return (
-        
-        <div className={cl.container}>
-            {message.map((m, i) => 
-                <div key={i} className={cl.block}>
-                    <img src={m.photo} alt='Nickname' className={cl.block__photo} />
-                    <div className={cl.block__message}>
-                        <div className={cl.block__message__text}>{m.message}</div>
-                        <div className={cl.block__message__date}>{m.date}</div>
-                    </div>
-                </div>)}
-            {message.map((m, i) => 
-                <div key={i} className={`${cl.block} ${cl.block__your}`}>
-                <div className={cl.block__message}>
-                    <div className={cl.block__message__text}>{m.message}</div>
-                    <div className={cl.block__message__date}>{m.date}</div>
+        <>
+            <Header />
+            <div className="container">
+                <Menu />
+                <div className={cl.container}>
+                    {message.map((m, i) => 
+                        <div key={i} className={cl.block}>
+                            <img src={m.photo} alt='Nickname' className={cl.block__photo} />
+                            <div className={cl.block__message}>
+                                <div className={cl.block__message__text}>{m.message}</div>
+                                <div className={cl.block__message__date}>{m.date}</div>
+                            </div>
+                        </div>)}
+                    {message.map((m, i) => 
+                        <div key={i} className={`${cl.block} ${cl.block__your}`}>
+                        <div className={cl.block__message}>
+                            <div className={cl.block__message__text}>{m.message}</div>
+                            <div className={cl.block__message__date}>{m.date}</div>
+                        </div>
+                            <img src={m.photo} alt='Nickname' className={cl.block__photo} />
+                        </div>)}
+                    {chat.map((m, i) => 
+                        <div key={i} className={`${cl.block} ${cl.block__your}`}>
+                        <div className={cl.block__message}>
+                            <div className={cl.block__message__text}>{m.message}</div>
+                            <div className={cl.block__message__date}>12</div>
+                        </div>
+                            <img src={photo} alt='Nickname' className={cl.block__photo} />
+                        </div>)}
+                        <form onSubmit={handleSubmit(onSubmit)} className={cl.text}>
+                            <div className={cl.text__block}>
+                                <textarea
+                                className={cl.text__block__textarea}
+                                {...register('message')} />
+                                <Button disabled={isValid}>Send</Button>
+                            </div>
+                        </form>
                 </div>
-                    <img src={m.photo} alt='Nickname' className={cl.block__photo} />
-                </div>)}
-            {chat?.map((m, i) => 
-                <div key={i} className={`${cl.block} ${cl.block__your}`}>
-                <div className={cl.block__message}>
-                    <div className={cl.block__message__text}>{m.message}</div>
-                    <div className={cl.block__message__date}>12</div>
-                </div>
-                    <img src={photo} alt='Nickname' className={cl.block__photo} />
-                </div>)}
-                <form onSubmit={handleSubmit(onSubmit)} className={cl.text}>
-                    <div className={cl.text__block}>
-                        <textarea
-                        className={cl.text__block__textarea}
-                        {...register('message')} />
-                        <Button>Send</Button>
-                    </div>
-                </form>
-        </div>
+            </div>
+        </>
     );
 };
 

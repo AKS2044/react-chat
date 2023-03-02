@@ -10,8 +10,11 @@
     border-color: $color2__hover;
     color: white;
     &:hover{
-        background-color: $color2__hover;
+        background-color: $header;
         transform: scale(1.1);
         transition: all 0.2s linear;
+    }
+    &:disabled{
+        background-color: $color2__hover;
     }
 }

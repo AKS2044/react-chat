@@ -9,7 +9,11 @@ type ButtonProps = {
 
 const Button = (props: ButtonProps) => {
     return (
-        <button type={props.type} disabled={props.disabled} className={cl.button}>{props.children}</button>
+        <button 
+        type={props.type} 
+        disabled={!props.disabled} 
+        className={cl.button}>{props.children}
+        </button>
     );
 };
 

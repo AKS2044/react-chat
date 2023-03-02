@@ -23,14 +23,13 @@ export const fetchLogin = createAsyncThunk<LoginPayloadParams, LoginParams, {rej
 export const fetchRegister = createAsyncThunk<LoginPayloadParams, RegisterParams, {rejectValue: {message: string}[]}>(
     'login/fetchRegisterStatus',
     async (params, { rejectWithValue }) => {
-        const { userName, password, passwordConfirm, email, city } = params;
+        const { userName, password, passwordConfirm, email } = params;
         try {
         const { data } = await axios.post<LoginPayloadParams>('/User/registration', {
             userName,
             password,
             passwordConfirm,
-            email,
-            city
+            email
         });
         return data;
     }catch(err: any){
