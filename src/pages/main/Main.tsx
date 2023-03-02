@@ -7,7 +7,6 @@ import { useForm } from 'react-hook-form';
 import { HubConnection } from '@microsoft/signalr/dist/esm/HubConnection';
 import Header from '../../components/header/Header';
 import Menu from '../../components/menu/Menu';
-import { TypeButton } from '../../enum/EnumButton';
 
 type MessageProps = {
     user: string,
