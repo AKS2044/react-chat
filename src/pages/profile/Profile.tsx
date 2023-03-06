@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { fetchGetProfile } from '../../redux/Auth/asyncActions';
 import { useAppDispatch } from '../../redux/store';
 import Loader from '../../components/loader/Loader';
+import { fetchCreateChat } from '../../redux/Chat/asyncActions';
 
 const Profile = () => {
     const dispatch = useAppDispatch();
@@ -22,7 +23,15 @@ const Profile = () => {
             window.location.reload();
         }
     }
-
+    
+    const onClickCreateChat = async () => {
+        const nameChat = prompt('Enter the name of the chat');
+        if(nameChat)
+        await dispatch(fetchCreateChat({nameChat: nameChat}));
+        else
+        window.alert("The field cannot be empty")
+    }
+    
     useEffect(() => {
         dispatch(fetchGetProfile());
     }, []);
@@ -35,7 +44,7 @@ const Profile = () => {
         {profileStatus === "loading" && <Loader />}
         <div className={cl.container}>
             <div className={cl.profile}>
-                <div className={cl.profile__button}>Create chat</div>
+                <div onClick={onClickCreateChat} className={cl.profile__button}>Create chat</div>
                 <div onClick={onClickLogout} className={`${cl.profile__button} ${cl.profile__button2}`}>Exit</div>
                 {profileStatus === 'completed' &&
                 <div className={cl.profile__block}>

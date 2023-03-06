@@ -7,15 +7,16 @@ import { useForm } from 'react-hook-form';
 import { HubConnection } from '@microsoft/signalr/dist/esm/HubConnection';
 import Header from '../../components/header/Header';
 import Menu from '../../components/menu/Menu';
+import { Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectIsAuth, selectLoginData } from '../../redux/Auth/selectors';
+import Loader from '../../components/loader/Loader';
 
 type MessageProps = {
-    user: string,
-    message: string
-}
-
-const defaultValues: MessageProps = {
-    user: 'thefan',
-    message: '',
+    userName: string,
+    message: string,
+    dateWrite: string,
+    pathPhoto: string
 }
 
 const Main = () => {
@@ -31,15 +32,17 @@ const Main = () => {
     const { 
         register, 
         handleSubmit, 
-        formState: {isValid}} = useForm({
-        defaultValues,
+        formState: {isValid}} = useForm<MessageProps>({
         mode: 'onChange'
     });
 
     const [ connection, setConnection ] = useState<HubConnection>();
     const [ chat, setChat ] = useState<MessageProps[]>([]);
+    const isAuth = useSelector(selectIsAuth);
+    const { statusAuth, data } = useSelector(selectLoginData);
     const latestChat = useRef<MessageProps[]>([]);
-    const date = new Date();
+    const dateNow = Date.now();
+    const date = new Date(dateNow);
     
     latestChat.current = chat;
 
@@ -48,18 +51,15 @@ const Main = () => {
             .withUrl('https://localhost:7275/chat')
             .withAutomaticReconnect()
             .build();
-
         setConnection(newConnection);
     }, []);
-    
+        
+    console.log(chat, 'chat')
     useEffect(() => {
         if (connection) {
             connection.start()
                 .then(() => {
-                    console.log('Connected!');
-                    
                     connection.on('ReceiveMessage', message => {
-                        console.log(latestChat);
                         const updatedChat: MessageProps[] = [...latestChat.current];
                         updatedChat.push(message);
                         
@@ -71,9 +71,12 @@ const Main = () => {
     }, [connection]);
 
     const onSubmit = async (values: MessageProps) => {
+        console.log(date)
         const message: MessageProps = {
-            user: values.user,
-            message: values.message
+            userName: data.userName,
+            message: values.message,
+            dateWrite: date.toLocaleTimeString(),
+            pathPhoto: data.pathPhoto
         }
         if (connection?.start) {
             try {
@@ -86,8 +89,14 @@ const Main = () => {
             alert('No connection to server yet.');
         }
     }
+
+    if(!isAuth && statusAuth === "error"){
+        return <Navigate to='login' />;
+    }
     return (
         <>
+            {statusAuth === "completed"
+            ? <>
             <Header />
             <div className="container">
                 <Menu />
@@ -99,22 +108,15 @@ const Main = () => {
                                 <div className={cl.block__message__text}>{m.message}</div>
                                 <div className={cl.block__message__date}>{m.date}</div>
                             </div>
-                        </div>)}
-                    {message.map((m, i) => 
-                        <div key={i} className={`${cl.block} ${cl.block__your}`}>
-                        <div className={cl.block__message}>
-                            <div className={cl.block__message__text}>{m.message}</div>
-                            <div className={cl.block__message__date}>{m.date}</div>
-                        </div>
-                            <img src={m.photo} alt='Nickname' className={cl.block__photo} />
-                        </div>)}
+                        </div>)} 
                     {chat.map((m, i) => 
-                        <div key={i} className={`${cl.block} ${cl.block__your}`}>
-                        <div className={cl.block__message}>
+                        <div key={i} className={m.userName === data.userName ? `${cl.block} ${cl.block__your}`: `${cl.block}`}>
+                        <div className={m.userName === data.userName ? `${cl.block__message} ${cl.message__your}`: `${cl.block__message}`}>
+                            <div className={cl.block__message__name}>{m.userName}</div>
                             <div className={cl.block__message__text}>{m.message}</div>
-                            <div className={cl.block__message__date}>12</div>
+                            <div className={cl.block__message__date}>{m.dateWrite}</div>
                         </div>
-                            <img src={photo} alt='Nickname' className={cl.block__photo} />
+                            <img src={`https://localhost:7275/${m.pathPhoto}`} alt='Nickname' className={cl.block__photo} />
                         </div>)}
                         <form onSubmit={handleSubmit(onSubmit)} className={cl.text}>
                             <div className={cl.text__block}>
@@ -126,6 +128,9 @@ const Main = () => {
                         </form>
                 </div>
             </div>
+            </>
+            : <Loader />}
+
         </>
     );
 };

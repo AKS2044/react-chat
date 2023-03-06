@@ -1,10 +1,12 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import auth from './Auth/slice'
+import auth from './Auth/slice';
+import chat from './Chat/slice';
 import { useDispatch } from 'react-redux';
 
 export const store = configureStore({
     reducer: {
         auth,
+        chat,
     },
 });
 

@@ -8,11 +8,14 @@
 
 .block{
     display: flex;
-    justify-content: flex-start;
+    align-items: center;
     margin: 20px;
     &__photo{
+        display: flex;
+        border-radius: 50%;
         width: 48px;
         height: 48px;
+        order: 2;
         &:hover{
             transition: all 0.2s linear;
             width: 64px;
@@ -22,15 +25,22 @@
     &__message{
         margin: 0 10px;
         display: flex;
+        order: 3;
         align-items: flex-start;
         flex-direction: column;
         padding: 10px;
         border-radius: 12px;
+        min-width: 100px;
         max-width: 66%;
         background-color: $color2;
         &__text{
             font-size: 1.1rem;
             margin-bottom: 5px;
+        }
+        &__name{
+            font-size: 0.8rem;
+            opacity: 0.7;
+            text-align: end;
         }
         &__date{
             font-size: 0.8rem;
@@ -67,4 +77,8 @@
 
 .block__your{
     justify-content: flex-end;
+}
+
+.message__your{
+    order: 2;
 }
