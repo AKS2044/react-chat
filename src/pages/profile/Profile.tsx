@@ -7,14 +7,17 @@ import { useEffect } from 'react';
 import { fetchGetProfile } from '../../redux/Auth/asyncActions';
 import { useAppDispatch } from '../../redux/store';
 import Loader from '../../components/loader/Loader';
-import { fetchCreateChat } from '../../redux/Chat/asyncActions';
+import { fetchChatsUser, fetchCreateChat } from '../../redux/Chat/asyncActions';
+import { AddChatParams } from '../../redux/Chat/types';
+import { selectChatData } from '../../redux/Chat/selectors';
 
 const Profile = () => {
     const dispatch = useAppDispatch();
     const isAuth = useSelector(selectIsAuth);
     const location = useLocation();
     const fromPage = location.state?.from?.pathname || '/login';
-    const { profile, profileStatus, statusAuth } = useSelector(selectLoginData);
+    const { profile, profileStatus } = useSelector(selectLoginData);
+    const { userChats, statusUserChats } = useSelector(selectChatData);
     
     const onClickLogout = () => {
         if(window.confirm("Do you really want to leave?"))
@@ -26,14 +29,21 @@ const Profile = () => {
     
     const onClickCreateChat = async () => {
         const nameChat = prompt('Enter the name of the chat');
-        if(nameChat)
-        await dispatch(fetchCreateChat({nameChat: nameChat}));
+        if(nameChat){
+            const chat: AddChatParams = {nameChat: nameChat};
+            await dispatch(fetchCreateChat(chat));
+        }
         else
         window.alert("The field cannot be empty")
     }
+
+    const getProfile = async () => {
+        await dispatch(fetchGetProfile());
+        await dispatch(fetchChatsUser());
+    }
     
     useEffect(() => {
-        dispatch(fetchGetProfile());
+        getProfile();
     }, []);
 
     if(!isAuth && profileStatus === "error"){
@@ -65,12 +75,14 @@ const Profile = () => {
                 <div className={cl.profile__chat}>
                     <div className={cl.profile__chat__title}>List of chats</div>
                     <div className={cl.profile__chat__items}>
-                        <Link to='/' className={cl.profile__chat__items__item}>
-                            <img src={photo} alt='Avatar' className={cl.profile__chat__items__item__photo} />
-                            <div className={cl.profile__chat__items__item__text}>Name chat</div>
-                            <div className={cl.profile__chat__items__item__text}>20 users</div>
-                            <div className={cl.profile__chat__items__item__text}>online: 3</div>
-                        </Link>
+                        {statusUserChats === 'completed' &&
+                        userChats.map(c => 
+                            <Link key={c.id} to='/' className={cl.profile__chat__items__item}>
+                                <img src={photo} alt='Avatar' className={cl.profile__chat__items__item__photo} />
+                                <div className={cl.profile__chat__items__item__text}>{c.nameChat}</div>
+                                <div className={cl.profile__chat__items__item__text}>{c.dateCreat}</div>
+                                <div className={cl.profile__chat__items__item__text}>Online: 2</div>
+                            </Link>)}
                     </div>
                 </div>
             </div>

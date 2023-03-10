@@ -1,12 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Status } from '../../enum/EnumStatus';
-import { fetchCreateChat } from "./asyncActions";
-import { ChatState, MessageParams, AddChatParams } from "./types";
+import { fetchAddMessageChat, fetchChatsUser, fetchCreateChat } from "./asyncActions";
+import { ChatState, MessageParams } from "./types";
 
 const initialState: ChatState = {
     message: {} as MessageParams,
+    userChats: [],
+    statusUserChats: Status.LOADING,
     statusChatMes: Status.LOADING,
-    addChat: {} as AddChatParams,
     statusAddChat: Status.LOADING,
 }
 
@@ -15,8 +16,8 @@ export const chatSlice = createSlice({
     initialState,
     reducers: {
     },
-    // fetchCreateChat builder
     extraReducers: (builder) => {
+         // fetchCreateChat builder
         builder.addCase(fetchCreateChat.pending, (state) => {
             state.statusAddChat = Status.LOADING;
         });
@@ -25,6 +26,27 @@ export const chatSlice = createSlice({
         });
         builder.addCase(fetchCreateChat.rejected, (state) => {
             state.statusAddChat = Status.ERROR;
+        });
+        // fetchAddMessageChat builder
+        builder.addCase(fetchAddMessageChat.pending, (state) => {
+            state.statusChatMes = Status.LOADING;
+        });
+        builder.addCase(fetchAddMessageChat.fulfilled, (state) => {
+            state.statusChatMes = Status.SUCCESS;
+        });
+        builder.addCase(fetchAddMessageChat.rejected, (state) => {
+            state.statusChatMes = Status.ERROR;
+        });
+        // fetchChatsUser builder
+        builder.addCase(fetchChatsUser.pending, (state) => {
+            state.statusUserChats = Status.LOADING;
+        });
+        builder.addCase(fetchChatsUser.fulfilled, (state, action) => {
+            state.statusUserChats = Status.SUCCESS;
+            state.userChats = action.payload;
+        });
+        builder.addCase(fetchChatsUser.rejected, (state) => {
+            state.statusUserChats = Status.ERROR;
         });
         },
 })

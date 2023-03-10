@@ -1,6 +1,7 @@
 @import "/src/colors";
 
 .menu{
+    height: 100vh;
     min-width: 300px;
     border-right: 1px solid $header;
     &__items{
