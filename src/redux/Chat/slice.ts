@@ -1,11 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Status } from '../../enum/EnumStatus';
-import { fetchAddMessageChat, fetchChatsUser, fetchCreateChat } from "./asyncActions";
-import { ChatState, MessageParams } from "./types";
+import { fetchAddMessageChat, fetchChatsUser, fetchCreateChat, fetchDeleteMessage, fetchMessageList } from "./asyncActions";
+import { ChatState } from "./types";
 
 const initialState: ChatState = {
-    message: {} as MessageParams,
+    messages: [],
     userChats: [],
+    statusGetMessagesChat: Status.LOADING,
+    statusDeleteMessage: Status.LOADING,
     statusUserChats: Status.LOADING,
     statusChatMes: Status.LOADING,
     statusAddChat: Status.LOADING,
@@ -47,6 +49,27 @@ export const chatSlice = createSlice({
         });
         builder.addCase(fetchChatsUser.rejected, (state) => {
             state.statusUserChats = Status.ERROR;
+        });
+        // fetchMessageList builder
+        builder.addCase(fetchMessageList.pending, (state) => {
+            state.statusGetMessagesChat = Status.LOADING;
+        });
+        builder.addCase(fetchMessageList.fulfilled, (state, action) => {
+            state.statusGetMessagesChat = Status.SUCCESS;
+            state.messages = action.payload;
+        });
+        builder.addCase(fetchMessageList.rejected, (state) => {
+            state.statusGetMessagesChat = Status.ERROR;
+        });
+        // fetchDeleteMessage builder
+        builder.addCase(fetchDeleteMessage.pending, (state) => {
+            state.statusDeleteMessage = Status.LOADING;
+        });
+        builder.addCase(fetchDeleteMessage.fulfilled, (state) => {
+            state.statusDeleteMessage = Status.SUCCESS;
+        });
+        builder.addCase(fetchDeleteMessage.rejected, (state) => {
+            state.statusDeleteMessage = Status.ERROR;
         });
         },
 })

@@ -13,14 +13,14 @@ import { useAppDispatch } from './redux/store';
 
 function App() {
   const dispatch = useAppDispatch();
-  const { statusLogin, statusRegister, statusAuth } = useSelector(selectLoginData);
+  const { statusLogin, statusRegister } = useSelector(selectLoginData);
   
   useEffect(() => {
     dispatch(fetchAuth());
   }, [statusLogin, statusRegister] )
   return (
     <Routes>
-      <Route index element={<Main />} />
+      <Route path='/:id' element={<Main />} />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
       <Route path='/profile' element={<Profile />} />

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import pickBy from "lodash.pickby";
+import { pickBy } from "lodash";
 import axios from "../../axios";
 import { ChatParams, MessageParams, AddChatParams } from "./types";
 
@@ -21,5 +21,29 @@ export const fetchChatsUser = createAsyncThunk<ChatParams[]>(
     'chat/fetchChatsUserStatus',
     async () => {
         const {data} = await axios.get<ChatParams[]>('/Chat/chatsUser');
+        return data;
+    });
+
+export const fetchDeleteMessage = createAsyncThunk<string, {messageId: number}>(
+    'chat/fetchDeleteMessageStatus',
+    async (params) => {
+        const {messageId} = params;
+        const {data} = await axios.delete('/Chat/messageDelete', {
+            params: pickBy({
+                messageId
+            })
+        });
+        return data;
+    });
+
+export const fetchMessageList = createAsyncThunk<MessageParams[], {chatId: number}>(
+    'chat/fetchMessageListStatus',
+    async (params) => {
+        const {chatId} = params;
+        const {data} = await axios.get<MessageParams[]>('/Chat/mesList', {
+            params: pickBy({
+                chatId
+            })
+        });
         return data;
     });

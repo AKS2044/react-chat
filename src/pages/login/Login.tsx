@@ -12,12 +12,6 @@ import cl from './Login.module.scss';
 import Alert from '../../components/UI/alert/Alert';
 import { TypeButton } from '../../enum/EnumButton';
 
-const defaultValues: LoginParams = {
-    userName: '',
-    password: '',
-    rememberMe: false,
-}
-
 const Login = () => {
     const isAuth = useSelector(selectIsAuth);
     const location = useLocation();

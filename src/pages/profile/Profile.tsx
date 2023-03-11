@@ -77,7 +77,7 @@ const Profile = () => {
                     <div className={cl.profile__chat__items}>
                         {statusUserChats === 'completed' &&
                         userChats.map(c => 
-                            <Link key={c.id} to='/' className={cl.profile__chat__items__item}>
+                            <Link key={c.id} to={`/${c.id}`} className={cl.profile__chat__items__item}>
                                 <img src={photo} alt='Avatar' className={cl.profile__chat__items__item__photo} />
                                 <div className={cl.profile__chat__items__item__text}>{c.nameChat}</div>
                                 <div className={cl.profile__chat__items__item__text}>{c.dateCreat}</div>

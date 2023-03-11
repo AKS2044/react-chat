@@ -1,14 +1,17 @@
 import { Status } from "../../enum/EnumStatus";
 
 export interface ChatState {
-    message: MessageParams,
+    messages: MessageParams[],
     userChats: ChatParams[],
+    statusGetMessagesChat: Status,
+    statusDeleteMessage: Status,
     statusUserChats: Status,
     statusChatMes: Status,
     statusAddChat: Status,
 }
 
 export interface MessageParams {
+    id: number,
     chatId: number
     userName: string,
     message: string,
