@@ -1,13 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Status } from '../../enum/EnumStatus';
-import { fetchAddMessageChat, fetchChatsUser, fetchCreateChat, fetchDeleteMessage, fetchMessageList } from "./asyncActions";
-import { ChatState } from "./types";
+import { fetchAddMessageChat, fetchChatsUser, fetchCreateChat, fetchDeleteMessage, fetchGetChat, fetchMessageList } from "./asyncActions";
+import { ChatParams, ChatState } from "./types";
 
 const initialState: ChatState = {
     messages: [],
     userChats: [],
+    chat: {} as ChatParams,
     statusGetMessagesChat: Status.LOADING,
     statusDeleteMessage: Status.LOADING,
+    statusGetChat: Status.LOADING,
     statusUserChats: Status.LOADING,
     statusChatMes: Status.LOADING,
     statusAddChat: Status.LOADING,
@@ -70,6 +72,17 @@ export const chatSlice = createSlice({
         });
         builder.addCase(fetchDeleteMessage.rejected, (state) => {
             state.statusDeleteMessage = Status.ERROR;
+        });
+        // fetchGetChat builder
+        builder.addCase(fetchGetChat.pending, (state) => {
+            state.statusGetChat = Status.LOADING;
+        });
+        builder.addCase(fetchGetChat.fulfilled, (state, action) => {
+            state.statusGetChat = Status.SUCCESS;
+            state.chat = action.payload;
+        });
+        builder.addCase(fetchGetChat.rejected, (state) => {
+            state.statusGetChat  = Status.ERROR;
         });
         },
 })

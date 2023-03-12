@@ -1,9 +1,8 @@
 import cl from './Main.module.scss';
 import Button from '../../components/UI/button/Button';
-import { HubConnectionBuilder } from '@microsoft/signalr';
+import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
 import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { HubConnection } from '@microsoft/signalr/dist/esm/HubConnection';
 import Header from '../../components/header/Header';
 import Menu from '../../components/menu/Menu';
 import { Navigate, useParams } from 'react-router-dom';
@@ -11,7 +10,7 @@ import { useSelector } from 'react-redux';
 import { selectIsAuth, selectLoginData } from '../../redux/Auth/selectors';
 import Loader from '../../components/loader/Loader';
 import { useAppDispatch } from '../../redux/store';
-import { fetchAddMessageChat, fetchDeleteMessage, fetchMessageList } from '../../redux/Chat/asyncActions';
+import { fetchAddMessageChat, fetchDeleteMessage, fetchGetChat, fetchMessageList } from '../../redux/Chat/asyncActions';
 import { MessageParams } from '../../redux/Chat/types';
 import { selectChatData } from '../../redux/Chat/selectors';
 
@@ -31,20 +30,22 @@ const Main = () => {
     });
 
     const [ connection, setConnection ] = useState<HubConnection>();
+    const [ connected, setConnected ] = useState('');
+    const [ chatik, setChatik ] = useState<MessageProps[]>([]);
     const dispatch = useAppDispatch();
     const params = useParams();
-    const [ chat, setChat ] = useState<MessageProps[]>([]);
     const isAuth = useSelector(selectIsAuth);
     const { statusAuth, data } = useSelector(selectLoginData);
-    const { messages, statusDeleteMessage } = useSelector(selectChatData);
+    const { messages, chat  } = useSelector(selectChatData);
     const latestChat = useRef<MessageProps[]>([]);
     const dateNow = Date.now();
     const date = new Date(dateNow);
     
-    latestChat.current = chat;
+    latestChat.current = chatik;
 
     const getMessages = async () => {
         await dispatch(fetchMessageList({chatId: Number(params.id)}));
+        await dispatch(fetchGetChat({chatId: Number(params.id)}));
     }
     useEffect(() => {
         const newConnection = new HubConnectionBuilder()
@@ -53,26 +54,31 @@ const Main = () => {
             .build();
         setConnection(newConnection);
     }, []);
-
-    useEffect(() => {
-        getMessages();
-    }, [statusDeleteMessage]);
-        
+    
     useEffect(() => {
         if (connection) {
             connection.start()
                 .then(() => {
+                    connection.on('SendAsync', message => {
+                        setConnected(message);
+                        console.log(data)
+                    });
+                })
+                .then(() => {
                     connection.on('ReceiveMessage', message => {
                         const updatedChat: MessageProps[] = [...latestChat.current];
                         updatedChat.push(message);
-                        
-                        setChat(updatedChat);
+                        setChatik(updatedChat);
                     });
                 })
                 .catch(e => console.log('Connection failed: ', e));
         }
     }, [connection]);
 
+    useEffect(() => {
+        getMessages();
+    }, []);
+    
     const OnClickDeleteMessage = (messageId: number) => {
         dispatch(fetchDeleteMessage({messageId}));
     }
@@ -120,7 +126,7 @@ const Main = () => {
                             <img src={`https://localhost:7275/${m.pathPhoto}`} alt='Nickname' className={cl.block__photo} />
                             <span onClick={() => OnClickDeleteMessage(m.id)}>⛌</span>
                         </div>)} 
-                    {chat.map((m, i) => 
+                    {chatik.map((m, i) => 
                         <div key={i} className={m.userName === data.userName ? `${cl.block} ${cl.block__your}`: `${cl.block}`}>
                             <div className={m.userName === data.userName ? `${cl.block__message} ${cl.message__your}`: `${cl.block__message}`}>
                                 <div className={cl.block__message__name}>{m.userName}</div>
