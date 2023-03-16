@@ -3,7 +3,11 @@ import { Status } from "../../enum/EnumStatus";
 export interface ChatState {
     messages: MessageParams[],
     userChats: ChatParams[],
+    usersChat: UsersChatPayloadParams[],
     chat: ChatParams,
+    searchChat: ChatParams[],
+    statusSearchChat: Status,
+    statusUsersChat: Status,
     statusGetMessagesChat: Status,
     statusDeleteMessage: Status,
     statusUserChats: Status,
@@ -30,4 +34,12 @@ export interface ChatParams {
 
 export interface AddChatParams {
     nameChat: string,
+}
+
+export interface UsersChatPayloadParams {
+    id: string,
+    email: string,
+    userName: string,
+    pathPhoto: string,
+    dateReg: string
 }

@@ -1,25 +1,25 @@
 import cl from './Menu.module.scss';
-import photo from '../../images/Rick.png';
 
-const Menu = () => {
-    const persons = [
-        {photo: photo, nick: 'Valera Boudman', online: true},
-        {photo: photo, nick: 'Semen Boudman', online: true},
-        {photo: photo, nick: 'Seva Boudman', online: false},
-        {photo: photo, nick: 'Valera Boudman', online: true},
-        {photo: photo, nick: 'Pukich Boudman', online: true},
-        {photo: photo, nick: 'Valera Puf', online: false},
-        {photo: photo, nick: 'Vandam Boudman', online: false}
-    ]
+type MenuProps = {
+    items: {
+        id: string,
+        email: string,
+        userName: string,
+        pathPhoto: string,
+        dateReg: string
+    }[]
+}
+
+const Menu: React.FC<MenuProps> = (props) => {
     return (
         <div className={cl.menu}>
             <div className={cl.menu__items}>
-                {persons.map((p, index) => 
-                <div key={index} className={cl.menu__person}>
-                    <img src={p.photo} alt='' title='' className={cl.menu__person__photo} />
+                {props.items.map((p) => 
+                <div key={p.id} className={cl.menu__person}>
+                    <img src={`https://localhost:7275/${p.pathPhoto}`} alt="User" title='Photo' className={cl.menu__person__photo} />
                     <div>
-                        <div className={cl.menu__person__nick}>{p.nick}</div>
-                        <div className={cl.menu__person__online}>{p.online ? 'online': 'offline'}</div>
+                        <div className={cl.menu__person__nick}>{p.userName}</div>
+                        <div className={cl.menu__person__online}>online</div>
                     </div>
                 </div>)}
             </div>

@@ -1,12 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Status } from '../../enum/EnumStatus';
-import { fetchAddMessageChat, fetchChatsUser, fetchCreateChat, fetchDeleteMessage, fetchGetChat, fetchMessageList } from "./asyncActions";
+import { 
+    fetchAddMessageChat, 
+    fetchChatsUser, 
+    fetchCreateChat, 
+    fetchDeleteMessage, 
+    fetchGetChat, 
+    fetchMessageList, 
+    fetchSearchChat, 
+    fetchUsersInChat } from "./asyncActions";
 import { ChatParams, ChatState } from "./types";
 
 const initialState: ChatState = {
     messages: [],
     userChats: [],
+    usersChat: [],
     chat: {} as ChatParams,
+    searchChat: [],
+    statusSearchChat: Status.LOADING,
+    statusUsersChat: Status.LOADING,
     statusGetMessagesChat: Status.LOADING,
     statusDeleteMessage: Status.LOADING,
     statusGetChat: Status.LOADING,
@@ -83,6 +95,28 @@ export const chatSlice = createSlice({
         });
         builder.addCase(fetchGetChat.rejected, (state) => {
             state.statusGetChat  = Status.ERROR;
+        });
+        // fetchUsersInChat builder
+        builder.addCase(fetchUsersInChat.pending, (state) => {
+            state.statusUsersChat = Status.LOADING;
+        });
+        builder.addCase(fetchUsersInChat.fulfilled, (state, action) => {
+            state.statusUsersChat = Status.SUCCESS;
+            state.usersChat = action.payload;
+        });
+        builder.addCase(fetchUsersInChat.rejected, (state) => {
+            state.statusUsersChat  = Status.ERROR;
+        });
+        // fetchSearchChat builder
+        builder.addCase(fetchSearchChat.pending, (state) => {
+            state.statusSearchChat = Status.LOADING;
+        });
+        builder.addCase(fetchSearchChat.fulfilled, (state, action) => {
+            state.statusSearchChat = Status.SUCCESS;
+            state.searchChat = action.payload;
+        });
+        builder.addCase(fetchSearchChat.rejected, (state) => {
+            state.statusSearchChat  = Status.ERROR;
         });
         },
 })
