@@ -6,6 +6,8 @@ export interface ChatState {
     usersChat: UsersChatPayloadParams[],
     chat: ChatParams,
     searchChat: ChatParams[],
+    statusEnterChat: Status,
+    statusLeaveChat: Status,
     statusSearchChat: Status,
     statusUsersChat: Status,
     statusGetMessagesChat: Status,
@@ -42,4 +44,9 @@ export interface UsersChatPayloadParams {
     userName: string,
     pathPhoto: string,
     dateReg: string
+}
+
+export interface EnterLeaveChatPayloadParams {
+    userId: string,
+    chatId: number,
 }

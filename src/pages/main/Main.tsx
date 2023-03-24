@@ -47,7 +47,6 @@ const Main = () => {
     latestChat.current = chatik;
     const token = localStorage?.getItem('token');
 
-    console.log(usersChat)
     const getMessages = async () => {
         await dispatch(fetchMessageList({chatId: Number(params.id)}));
         await dispatch(fetchGetChat({chatId: Number(params.id)}));

@@ -5,7 +5,9 @@ import {
     fetchChatsUser, 
     fetchCreateChat, 
     fetchDeleteMessage, 
+    fetchEnterTheChat, 
     fetchGetChat, 
+    fetchLeaveTheChat, 
     fetchMessageList, 
     fetchSearchChat, 
     fetchUsersInChat } from "./asyncActions";
@@ -17,6 +19,8 @@ const initialState: ChatState = {
     usersChat: [],
     chat: {} as ChatParams,
     searchChat: [],
+    statusEnterChat: Status.LOADING,
+    statusLeaveChat: Status.LOADING,
     statusSearchChat: Status.LOADING,
     statusUsersChat: Status.LOADING,
     statusGetMessagesChat: Status.LOADING,
@@ -117,6 +121,26 @@ export const chatSlice = createSlice({
         });
         builder.addCase(fetchSearchChat.rejected, (state) => {
             state.statusSearchChat  = Status.ERROR;
+        });
+        // fetchEnterTheChat builder
+        builder.addCase(fetchEnterTheChat.pending, (state) => {
+            state.statusEnterChat = Status.LOADING;
+        });
+        builder.addCase(fetchEnterTheChat.fulfilled, (state) => {
+            state.statusEnterChat = Status.SUCCESS;
+        });
+        builder.addCase(fetchEnterTheChat.rejected, (state) => {
+            state.statusEnterChat  = Status.ERROR;
+        });
+        // fetchLeaveTheChat builder
+        builder.addCase(fetchLeaveTheChat.pending, (state) => {
+            state.statusLeaveChat = Status.LOADING;
+        });
+        builder.addCase(fetchLeaveTheChat.fulfilled, (state) => {
+            state.statusLeaveChat = Status.SUCCESS;
+        });
+        builder.addCase(fetchLeaveTheChat.rejected, (state) => {
+            state.statusLeaveChat  = Status.ERROR;
         });
         },
 })

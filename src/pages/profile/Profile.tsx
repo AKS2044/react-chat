@@ -1,13 +1,13 @@
 import cl from './Profile.module.scss';
 import photo from '../../images/photo2.png';
-import { Link, Navigate, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectIsAuth, selectLoginData } from '../../redux/Auth/selectors';
 import { useEffect, useRef, useState } from 'react';
 import { fetchGetProfile } from '../../redux/Auth/asyncActions';
 import { useAppDispatch } from '../../redux/store';
 import Loader from '../../components/loader/Loader';
-import { fetchChatsUser, fetchCreateChat, fetchSearchChat } from '../../redux/Chat/asyncActions';
+import { fetchChatsUser, fetchCreateChat, fetchEnterTheChat, fetchLeaveTheChat, fetchSearchChat } from '../../redux/Chat/asyncActions';
 import { AddChatParams } from '../../redux/Chat/types';
 import { selectChatData } from '../../redux/Chat/selectors';
 
@@ -17,10 +17,18 @@ const Profile = () => {
     const dispatch = useAppDispatch();
     const isAuth = useSelector(selectIsAuth);
     const location = useLocation();
+    const params = useParams();
+    const whoseProfile = Boolean(params.user);
     const fromPage = location.state?.from?.pathname || '/login';
-    const { profile, profileStatus } = useSelector(selectLoginData);
-    const { userChats, statusUserChats, searchChat, statusSearchChat } = useSelector(selectChatData);
-    
+    const { profile, profileStatus, data, statusAuth } = useSelector(selectLoginData);
+    const { 
+        userChats,
+        statusUserChats,
+        searchChat,
+        statusSearchChat,
+        statusEnterChat,
+        statusLeaveChat } = useSelector(selectChatData);
+
     const onClickLogout = () => {
         if(window.confirm("Do you really want to leave?"))
         {
@@ -39,8 +47,20 @@ const Profile = () => {
         window.alert("The field cannot be empty")
     }
 
+    const onClickJoinChat = async (chatId: number) => {
+        await dispatch(fetchEnterTheChat({userId: data.id, chatId: chatId}));
+    }
+
+    const onClickLeaveChat = async (chatId: number) => {
+        await dispatch(fetchLeaveTheChat({userId: data.id, chatId: chatId}));
+    }
+
     const getProfile = async () => {
-        await dispatch(fetchGetProfile());
+        if(params.user){
+            await dispatch(fetchGetProfile({userName: params.user}));
+        }else{
+            await dispatch(fetchGetProfile({userName: data.userName}));
+        }
         await dispatch(fetchChatsUser());
     }
 
@@ -62,7 +82,9 @@ const Profile = () => {
     }, []);
 
     useEffect(() => {
-        searchChatAsync(search);
+        if(search){
+            searchChatAsync(search);
+        }
     }, [search]);
 
     if(!isAuth && profileStatus === "error"){
@@ -73,8 +95,9 @@ const Profile = () => {
         {profileStatus === "loading" && <Loader />}
         <div className={cl.container}>
             <div className={cl.profile}>
+                {whoseProfile && <Link to='/profile' className={`${cl.profile__button} ${cl.profile__profile}`}>Profile</Link>}
                 <div onClick={onClickCreateChat} className={cl.profile__button}>Create chat</div>
-                <div onClick={onClickLogout} className={`${cl.profile__button} ${cl.profile__button2}`}>Exit</div>
+                <div onClick={onClickLogout} className={`${cl.profile__button} ${cl.profile__exit}`}>Go out</div>
                 {profileStatus === 'completed' &&
                 <div className={cl.profile__block}>
                     <img src={`https://localhost:7275/${profile.pathPhoto}`} alt='Avatar' className={cl.profile__block__photo} />
@@ -96,8 +119,8 @@ const Profile = () => {
                     </div>
                 </div>}
                 <div className={cl.profile__chat}>
-                    <div className={cl.profile__chat__title}>My chats</div>
-                    <div>
+                    <div className={cl.profile__chat__title}>{params.user ? profile.userName + ' chats' : 'My chats'}</div>
+                    {!whoseProfile && <div>
                         <input 
                         value={search}
                         ref={searchRef}
@@ -105,26 +128,42 @@ const Profile = () => {
                         placeholder='Search...' 
                         className={cl.profile__chat__input} />
                         {search && 
-                        <span title='Clear' onClick={() => onClickClear(searchRef, setSearch)} className={cl.profile__chat__input__clear}>⛌</span>}
-                    </div>
-                    <div className={cl.profile__chat__items}>
+                        <span 
+                        title='Clear' 
+                        onClick={() => onClickClear(searchRef, setSearch)} 
+                        className={cl.profile__chat__input__clear}>⛌</span>}
+                    </div>}
+                    <div className={cl.search}>
                         {search
                         ? <>{statusSearchChat === 'completed' &&
                         searchChat.map(c => 
-                            <Link key={c.id} to={`/${c.id}`} className={cl.profile__chat__items__item}>
-                                <img src={photo} alt='Avatar' className={cl.profile__chat__items__item__photo} />
-                                <div className={cl.profile__chat__items__item__text}>{c.nameChat}</div>
-                                <div className={cl.profile__chat__items__item__text}>{c.dateCreat}</div>
-                                <div className={cl.profile__chat__items__item__text}>Online: 2</div>
-                            </Link>)}</>
+                            <div key={c.id} className={cl.search__items}>
+                                <Link to={`/${c.id}`} className={cl.search__items__item}>
+                                    <img src={photo} alt='Avatar' className={cl.search__items__item__photo} />
+                                    <div className={cl.search__items__item__text}>{c.nameChat}</div>
+                                    <div className={cl.search__items__item__text}>{c.dateCreat}</div>
+                                    <div className={cl.search__items__item__text}>Online: 2</div>
+                                </Link>
+                                {!userChats.find((s) => s.id === c.id) 
+                                && <button 
+                                onClick={() => onClickJoinChat(c.id)} 
+                                className={cl.search__items__button} 
+                                title='Enter the chat'>Join</button>}
+                            </div>)}</>
                         : <>{statusUserChats === 'completed' &&
                         userChats.map(c => 
-                            <Link key={c.id} to={`/${c.id}`} className={cl.profile__chat__items__item}>
-                                <img src={photo} alt='Avatar' className={cl.profile__chat__items__item__photo} />
-                                <div className={cl.profile__chat__items__item__text}>{c.nameChat}</div>
-                                <div className={cl.profile__chat__items__item__text}>{c.dateCreat}</div>
-                                <div className={cl.profile__chat__items__item__text}>Online: 2</div>
-                            </Link>)}</>}
+                            <div key={c.id} className={cl.search__items}>
+                                <Link key={c.id} to={`/${c.id}`} className={cl.search__items__item}>
+                                    <img src={photo} alt='Avatar' className={cl.search__items__item__photo} />
+                                    <div className={cl.search__items__item__text}>{c.nameChat}</div>
+                                    <div className={cl.search__items__item__text}>{c.dateCreat}</div>
+                                    <div className={cl.search__items__item__text}>Online: 2</div>
+                                </Link>
+                                <button 
+                                onClick={() => onClickLeaveChat(c.id)} 
+                                className={cl.search__items__button} 
+                                title='Leave the chat'>Leave</button>
+                            </div>)}</>}
                     </div>
                 </div>
             </div>
