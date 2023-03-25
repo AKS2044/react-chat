@@ -1,1 +1,32 @@
 @import "/src/colors";
+
+.notfound{
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    height: 100vh;
+    &__photo{
+        width: 550px;
+    }
+    &__text{
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+    &__404{
+        font-weight: 700;
+        font-size: 15rem;
+    }
+    &__link{
+        padding: 3px;
+        font-size: 2.2rem;
+        border: 1px solid $text;
+        border-radius: 12px;
+        font-weight: 300;
+        &:hover{
+            transition: all 0.2s linear;
+            background-color: $text;
+            color: $background;
+        }
+    }
+}

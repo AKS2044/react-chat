@@ -54,14 +54,16 @@ const Profile = () => {
     const onClickLeaveChat = async (chatId: number) => {
         await dispatch(fetchLeaveTheChat({userId: data.id, chatId: chatId}));
     }
+    console.log(statusAuth)
 
     const getProfile = async () => {
         if(params.user){
             await dispatch(fetchGetProfile({userName: params.user}));
-        }else{
+            await dispatch(fetchChatsUser({userName: params.user}));
+        }else if(statusAuth === 'completed'){
             await dispatch(fetchGetProfile({userName: data.userName}));
+            await dispatch(fetchChatsUser({userName: data.userName}));
         }
-        await dispatch(fetchChatsUser());
     }
 
     const searchChatAsync = async (chatName: string) => {
@@ -79,13 +81,17 @@ const Profile = () => {
     
     useEffect(() => {
         getProfile();
-    }, []);
+    }, [statusEnterChat, statusLeaveChat, whoseProfile, statusAuth]);
 
     useEffect(() => {
         if(search){
             searchChatAsync(search);
         }
     }, [search]);
+
+    if(params.user && statusAuth === 'completed' && params.user === data.userName){
+        return <Navigate to='/profile' />;
+    }
 
     if(!isAuth && profileStatus === "error"){
         return <Navigate to={fromPage} />;
@@ -157,7 +163,6 @@ const Profile = () => {
                                     <img src={photo} alt='Avatar' className={cl.search__items__item__photo} />
                                     <div className={cl.search__items__item__text}>{c.nameChat}</div>
                                     <div className={cl.search__items__item__text}>{c.dateCreat}</div>
-                                    <div className={cl.search__items__item__text}>Online: 2</div>
                                 </Link>
                                 <button 
                                 onClick={() => onClickLeaveChat(c.id)} 

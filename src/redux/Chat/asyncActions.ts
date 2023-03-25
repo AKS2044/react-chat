@@ -17,10 +17,15 @@ export const fetchAddMessageChat = createAsyncThunk<string, MessageParams>(
         return data;
     });
 
-export const fetchChatsUser = createAsyncThunk<ChatParams[]>(
+export const fetchChatsUser = createAsyncThunk<ChatParams[], {userName: string}>(
     'chat/fetchChatsUserStatus',
-    async () => {
-        const {data} = await axios.get<ChatParams[]>('/Chat/chatsUser');
+    async (params) => {
+        const {userName} = params;
+        const {data} = await axios.get<ChatParams[]>('/Chat/chatsUser', {
+            params: pickBy({
+                userName
+            })
+        });
         return data;
     });
 

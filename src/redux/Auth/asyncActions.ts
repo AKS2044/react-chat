@@ -42,7 +42,6 @@ export const fetchGetProfile = createAsyncThunk<ProfilePayloadParams, {userName:
     'login/fetchGetProfileStatus',
     async (params) => {
         const { userName } = params;
-        console.log(userName)
         const { data } = await axios.get<ProfilePayloadParams>('/User/profile', {
             params: pickBy({
                 userName
