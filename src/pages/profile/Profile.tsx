@@ -20,7 +20,7 @@ const Profile = () => {
     const params = useParams();
     const whoseProfile = Boolean(params.user);
     const fromPage = location.state?.from?.pathname || '/login';
-    const { profile, profileStatus, data, statusAuth } = useSelector(selectLoginData);
+    const { profile, profileStatus, data, statusAuth, serverError } = useSelector(selectLoginData);
     const { 
         userChats,
         statusUserChats,
@@ -54,7 +54,6 @@ const Profile = () => {
     const onClickLeaveChat = async (chatId: number) => {
         await dispatch(fetchLeaveTheChat({userId: data.id, chatId: chatId}));
     }
-    console.log(statusAuth)
 
     const getProfile = async () => {
         if(params.user){
@@ -65,7 +64,7 @@ const Profile = () => {
             await dispatch(fetchChatsUser({userName: data.userName}));
         }
     }
-
+    
     const searchChatAsync = async (chatName: string) => {
         await dispatch(fetchSearchChat({chatName}));
     }
@@ -104,7 +103,7 @@ const Profile = () => {
                 {whoseProfile && <Link to='/profile' className={`${cl.profile__button} ${cl.profile__profile}`}>Profile</Link>}
                 <div onClick={onClickCreateChat} className={cl.profile__button}>Create chat</div>
                 <div onClick={onClickLogout} className={`${cl.profile__button} ${cl.profile__exit}`}>Go out</div>
-                {profileStatus === 'completed' &&
+                {(profileStatus === 'completed' && data) &&
                 <div className={cl.profile__block}>
                     <img src={`https://localhost:7275/${profile.pathPhoto}`} alt='Avatar' className={cl.profile__block__photo} />
                     <div className={cl.profile__block__info}>
@@ -124,21 +123,23 @@ const Profile = () => {
                         <div className={cl.profile__block__info__text}>{profile.roles.map((r) => r.toLowerCase())}</div>
                     </div>
                 </div>}
-                <div className={cl.profile__chat}>
-                    <div className={cl.profile__chat__title}>{params.user ? profile.userName + ' chats' : 'My chats'}</div>
-                    {!whoseProfile && <div>
-                        <input 
-                        value={search}
-                        ref={searchRef}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeInput(e, setSearch)}
-                        placeholder='Search...' 
-                        className={cl.profile__chat__input} />
-                        {search && 
-                        <span 
-                        title='Clear' 
-                        onClick={() => onClickClear(searchRef, setSearch)} 
-                        className={cl.profile__chat__input__clear}>⛌</span>}
-                    </div>}
+                <div className={cl.search}>
+                    <div className={cl.search__block}>
+                        <div className={cl.search__block__title}>{params.user ? profile.userName + ' chats' : 'My chats'}</div>
+                        {!whoseProfile && <div>
+                            <input 
+                            value={search}
+                            ref={searchRef}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeInput(e, setSearch)}
+                            placeholder='Search...' 
+                            className={cl.search__block__input} />
+                            {search && 
+                            <span 
+                            title='Clear' 
+                            onClick={() => onClickClear(searchRef, setSearch)} 
+                            className={cl.search__block__input__clear}>⛌</span>}
+                        </div>}
+                    </div>
                     <div className={cl.search}>
                         {search
                         ? <>{statusSearchChat === 'completed' &&
@@ -148,7 +149,6 @@ const Profile = () => {
                                     <img src={photo} alt='Avatar' className={cl.search__items__item__photo} />
                                     <div className={cl.search__items__item__text}>{c.nameChat}</div>
                                     <div className={cl.search__items__item__text}>{c.dateCreat}</div>
-                                    <div className={cl.search__items__item__text}>Online: 2</div>
                                 </Link>
                                 {!userChats.find((s) => s.id === c.id) 
                                 && <button 

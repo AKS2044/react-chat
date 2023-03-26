@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { AxiosError } from "axios";
 import { pickBy } from "lodash";
 import axios from "../../axios";
 import { LoginParams, LoginPayloadParams, ProfilePayloadParams, RegisterParams } from "./types";
@@ -38,16 +39,20 @@ export const fetchRegister = createAsyncThunk<LoginPayloadParams, RegisterParams
     }
     });
 
-export const fetchGetProfile = createAsyncThunk<ProfilePayloadParams, {userName: string}>(
+export const fetchGetProfile = createAsyncThunk<ProfilePayloadParams, {userName: string}, {rejectValue: {status: number}}>(
     'login/fetchGetProfileStatus',
-    async (params) => {
-        const { userName } = params;
-        const { data } = await axios.get<ProfilePayloadParams>('/User/profile', {
-            params: pickBy({
-                userName
-            })
-        });
-        return data;
+    async (params, {rejectWithValue}) => {
+        try{
+            const { userName } = params;
+            const { data, status } = await axios.get<ProfilePayloadParams>('/User/profile', {
+                params: pickBy({
+                    userName
+                })
+            });
+            return data;
+        }catch(e: any){
+            return rejectWithValue(e.response.status)
+        }
     });
 
 export const fetchUploadPhoto = createAsyncThunk<string, FormData>(

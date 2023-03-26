@@ -6,20 +6,20 @@
     align-items: center;
     height: 100vh;
     &__photo{
-        width: 550px;
+        width: 20%;
     }
     &__text{
-        font-size: 2rem;
+        font-size: 2em;
         font-weight: 700;
         margin-bottom: 20px;
     }
     &__404{
         font-weight: 700;
-        font-size: 15rem;
+        font-size: 15em;
     }
     &__link{
         padding: 3px;
-        font-size: 2.2rem;
+        font-size: 1em;
         border: 1px solid $text;
         border-radius: 12px;
         font-weight: 300;

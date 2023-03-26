@@ -4,6 +4,7 @@ export interface LoginState {
     data: LoginPayloadParams,
     error: {message: string}[],
     profile: ProfilePayloadParams,
+    serverError: number,
     profileStatus: Status,
     urlPhoto: string,
     uploadPhotoStatus: Status,

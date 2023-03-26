@@ -13,11 +13,11 @@ import { useAppDispatch } from './redux/store';
 
 function App() {
   const dispatch = useAppDispatch();
-  const { statusLogin, statusRegister } = useSelector(selectLoginData);
-  
+  const { statusLogin, statusRegister, serverError } = useSelector(selectLoginData);
   useEffect(() => {
     dispatch(fetchAuth());
   }, [statusLogin, statusRegister] )
+
   return (
     <Routes>
       <Route path='/:id' element={<Main />} />

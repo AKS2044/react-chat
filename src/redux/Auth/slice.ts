@@ -9,6 +9,7 @@ const initialState: LoginState = {
     error: [],
     profile: {} as ProfilePayloadParams,
     urlPhoto: '',
+    serverError: 0,
     uploadPhotoStatus: Status.LOADING,
     profileStatus: Status.LOADING,
     statusLogin: Status.LOADING,
@@ -49,7 +50,7 @@ export const loginSlice = createSlice({
         builder.addCase(fetchRegister.rejected, (state, action) => {
             state.statusRegister = Status.ERROR;
             state.data = {} as LoginPayloadParams;
-            state.error = action.payload ? action.payload: [];
+            state.error = action.payload ? action.payload : [];
         });
 
         // fetchAuth builder
@@ -72,8 +73,9 @@ export const loginSlice = createSlice({
             state.profileStatus = Status.SUCCESS;
             state.profile = action.payload;
         });
-        builder.addCase(fetchGetProfile.rejected, (state) => {
+        builder.addCase(fetchGetProfile.rejected, (state, action) => {
             state.profileStatus = Status.ERROR;
+            state.serverError = action.payload?.status ? action.payload?.status : 0;
         });
 
         // fetchUpload builder

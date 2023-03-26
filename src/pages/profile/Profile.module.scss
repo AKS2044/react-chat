@@ -10,20 +10,28 @@
 }
 
 .profile{
-    position: relative;
+    position: fixed;
+    z-index: 100;
     display: flex;
     width: 800px;
     height: 500px;
     border: 1px solid $header;
     background-color: $background2;
     border-radius: 12px;
+    @media (max-width: 840px) {
+        width: 500px;
+    }
+    @media (max-width: 390px) {
+        width: 300px;
+        flex-direction: column
+    }
     &__button{
         position: absolute;
         display: flex;
         align-items: center;
         cursor: pointer;
         font-size: 1.2rem;
-        right: -115px;
+        right: -114px;
         top: 85px;
         height: 40px;
         border-radius: 0 12px 12px 0;
@@ -33,14 +41,28 @@
             background-color: $header;
             transition: all 0.2s linear;
         }
+        @media (max-width: 390px) {
+            border-radius: 6px;
+            height: 30px;
+            top: -33px;
+            right: 70px;
+        }
     }
     &__exit{
         top: 130px;
         right: -73px;
+        @media (max-width: 390px) {
+            top: -33px;
+            right: 0;
+        }
     }
     &__profile{
         top: 40px;
         right: -72px;
+        @media (max-width: 390px) {
+            top: -33px;
+            right: 181px;
+        }
     }
     &__block{
         display: flex;
@@ -49,10 +71,22 @@
         padding: 20px;
         min-width: 300px;
         border-right: 1px solid $header;
+        @media (max-width: 840px) {
+            padding: 5px;
+            min-width: 200px;
+        }
+        @media (max-width: 390px) {
+            border-right: none;
+        }
         &__photo{
             border-radius: 50%;
             width: 184px;
-            height: 184px;
+            @media (max-width: 840px) {
+                width: 124px;
+            }
+            @media (max-width: 390px) {
+                width: 84px;
+            }
         }
         &__info{
             display: flex;
@@ -63,10 +97,17 @@
             padding: 10px 0;
             &__text{
                 font-size: 1.1rem;
+                @media (max-width: 840px) {
+                    font-size: 0.9rem;
+                }
             }
         }
     }
-    &__chat{
+}
+
+.search{
+    width: 100%;
+    &__block{
         display: flex;
         flex-direction: column;
         width: 100%;
@@ -79,6 +120,10 @@
             height: 40px;
             margin-bottom: 5px;
             background-color: $header;
+            @media (max-width: 390px) {
+                height: 30px;
+                border-top-right-radius: 0;
+            }
         }
         &__input{
             position: relative;
@@ -105,20 +150,18 @@
             }
         }
     }
-}
-
-.search{
-    width: 100%;
+    overflow: hidden auto;
+    border-radius: 0 0 12px 12px;
     &__items{
         display: flex;
         justify-content: space-between;
         &__item{
-            width: 100%;
+            width: 80%;
             cursor: pointer;
-            padding: 5px 0;
+            padding: 5px;
             display: flex;
             align-items: center;
-            justify-content: space-around;
+            justify-content: space-between;
             background-color: $color2;
             border-bottom: 1px solid $color2__hover;
             &:hover{
@@ -127,13 +170,15 @@
             }
             &__photo{
                 width: 48px;
-                height: 48px;
+                @media (max-width: 390px) {
+                    width: 32px;
+                }
             }
             &__text{
+                width: 100px;
                 font-weight: 300;
             }
         }
-        
         &__button{
             outline: none;
             color: $text;
@@ -142,7 +187,7 @@
             border-left: 1px solid $color2__hover;
             border-top: none;
             border-right: none;
-            width: 70px;
+            width: 20%;
             font-weight: 300;
             &:hover{
                 transition: all 0.2s linear;
