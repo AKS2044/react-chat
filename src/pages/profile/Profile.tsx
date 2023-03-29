@@ -20,7 +20,7 @@ const Profile = () => {
     const params = useParams();
     const whoseProfile = Boolean(params.user);
     const fromPage = location.state?.from?.pathname || '/login';
-    const { profile, profileStatus, data, statusAuth, serverError } = useSelector(selectLoginData);
+    const { profile, profileStatus, data, statusAuth } = useSelector(selectLoginData);
     const { 
         userChats,
         statusUserChats,
@@ -36,7 +36,7 @@ const Profile = () => {
             window.location.reload();
         }
     }
-    
+
     const onClickCreateChat = async () => {
         const nameChat = prompt('Enter the name of the chat');
         if(nameChat){
@@ -88,13 +88,15 @@ const Profile = () => {
         }
     }, [search]);
 
-    if(params.user && statusAuth === 'completed' && params.user === data.userName){
-        return <Navigate to='/profile' />;
-    }
+    if(params.user && statusAuth === 'completed' && params.user === data.userName)
+    return <Navigate to='/profile' />;
 
-    if(!isAuth && profileStatus === "error"){
-        return <Navigate to={fromPage} />;
-    }
+    if(profileStatus === "error")
+    return <Navigate to={location.state?.from?.pathname || '/oops'} />;
+
+    if(!isAuth && statusAuth === 'error')
+    return <Navigate to={fromPage} />;
+
     return (
         <>
         {profileStatus === "loading" && <Loader />}

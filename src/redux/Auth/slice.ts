@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Status } from '../../enum/EnumStatus';
 import { fetchLogin, fetchRegister, fetchAuth, fetchGetProfile, fetchUploadPhoto } from "./asyncActions";
-import { LoginState, LoginPayloadParams, ProfilePayloadParams } from "./types";
+import { LoginState, LoginPayloadParams, ProfilePayloadParams, ErrorParams } from "./types";
 
 
 const initialState: LoginState = {
@@ -9,7 +9,7 @@ const initialState: LoginState = {
     error: [],
     profile: {} as ProfilePayloadParams,
     urlPhoto: '',
-    serverError: 0,
+    serverError: {} as ErrorParams,
     uploadPhotoStatus: Status.LOADING,
     profileStatus: Status.LOADING,
     statusLogin: Status.LOADING,
@@ -75,7 +75,7 @@ export const loginSlice = createSlice({
         });
         builder.addCase(fetchGetProfile.rejected, (state, action) => {
             state.profileStatus = Status.ERROR;
-            state.serverError = action.payload?.status ? action.payload?.status : 0;
+            state.serverError = action.payload ? action.payload : {} as ErrorParams;
         });
 
         // fetchUpload builder

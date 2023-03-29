@@ -2,13 +2,32 @@
 
 .menu{
     margin-top: 60px;
-    height: 100vh;
-    min-width: 300px;
+    width: 20%;
     border-right: 1px solid $header;
+    @media (max-width: 1000px) {
+        min-width: 200px;
+    }
+    @media (max-width: 670px) {
+        border-right: none;
+        position: absolute;
+        margin-top: 80px;
+        z-index: 50;
+        width: 100vw;
+        height: 100%;
+        background-color: $color2;
+    }
     &__items{
         position: fixed;
-        width: 299px;
+        width: 20%;
+        border-right: 1px solid $header;
         overflow-y: hidden;
+        @media (max-width: 1000px) {
+            min-width: 200px;
+        }
+        @media (max-width: 670px) {
+            border-right: none;
+            width: 100vw;
+        }
     }
     &__person{
         min-height: 60px;

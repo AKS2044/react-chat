@@ -34,6 +34,7 @@ const Main = () => {
     const [ disconnected, setDisconnected ] = useState<string[]>([]);
     const [ chatik, setChatik ] = useState<MessageProps[]>([]);
     const [ connectedInfo, setConnectedInfo ] = useState(false);
+    const [ watchAll, setWatchAll ] = useState(false);
     const [ disconnectedInfo, setDisconnectedInfo ] = useState(false);
     const dispatch = useAppDispatch();
     const params = useParams();
@@ -42,7 +43,7 @@ const Main = () => {
     const { messages, usersChat  } = useSelector(selectChatData);
     const latestChat = useRef<MessageProps[]>([]);
     const dateNow = Date.now();
-    const date = new Date(dateNow);
+    const date = new Date(dateNow);const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     
     latestChat.current = chatik;
     const token = localStorage?.getItem('token');
@@ -107,10 +108,22 @@ const Main = () => {
         getMessages();
     }, []);
     
+    useEffect(() => {
+        function handleWindowResize() {
+            setWindowWidth(window.innerWidth);
+        }
+    
+        window.addEventListener('resize', handleWindowResize);
+    
+        return () => {
+            window.removeEventListener('resize', handleWindowResize);
+        };
+    }, []);
+    
     const OnClickDeleteMessage = (messageId: number) => {
         dispatch(fetchDeleteMessage({messageId}));
     }
-
+    
     const onSubmit = async (values: MessageProps) => {
         const message: MessageParams = {
             id: 0,
@@ -141,8 +154,12 @@ const Main = () => {
             {statusAuth === "completed"
             ? <>
             <Header userName={data.userName} />
+            <div className={cl.panel}>
+                <div className={cl.panel__members}>members: {usersChat.length}</div>
+                <div className={cl.panel__all} onClick={() => setWatchAll(!watchAll)}>{watchAll ? '⛌' : 'Watch all'}</div>
+            </div>
             <div className="container">
-                <Menu items={usersChat}/>
+                {(windowWidth >= 670 || watchAll) && <Menu items={usersChat}/>}
                 <div className={cl.container}>
                     {messages.map((m) => 
                         <div key={m.id} className={m.userName === data.userName ? `${cl.block} ${cl.block__your}`: `${cl.block}`}>

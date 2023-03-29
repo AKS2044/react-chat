@@ -1,24 +1,23 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { AxiosError } from "axios";
 import { pickBy } from "lodash";
 import axios from "../../axios";
-import { LoginParams, LoginPayloadParams, ProfilePayloadParams, RegisterParams } from "./types";
+import { ErrorParams, LoginParams, LoginPayloadParams, ProfilePayloadParams, RegisterParams } from "./types";
 
 
 
 export const fetchLogin = createAsyncThunk<LoginPayloadParams, LoginParams, {rejectValue: {message: string}[]}>(
     'login/fetchLoginStatus',
-    async (params, { rejectWithValue }) => {
+    async (params) => {
         const { userName, password, rememberMe } = params;
         try {
-            const { data } = await axios.post<LoginPayloadParams>('/User/login', {
+            const { data, status,statusText } = await axios.post<LoginPayloadParams>('/User/login', {
                 userName,
                 password,
                 rememberMe,
             });
-                return data;
+            return data;
         }catch(err: any){
-            return rejectWithValue(err.response.data)
+            throw new Error(err.response.data.message);
         }
     });
 
@@ -39,19 +38,23 @@ export const fetchRegister = createAsyncThunk<LoginPayloadParams, RegisterParams
     }
     });
 
-export const fetchGetProfile = createAsyncThunk<ProfilePayloadParams, {userName: string}, {rejectValue: {status: number}}>(
+export const fetchGetProfile = createAsyncThunk<ProfilePayloadParams, {userName: string}, {rejectValue: ErrorParams}>(
     'login/fetchGetProfileStatus',
     async (params, {rejectWithValue}) => {
         try{
             const { userName } = params;
-            const { data, status } = await axios.get<ProfilePayloadParams>('/User/profile', {
+            const { data } = await axios.get<ProfilePayloadParams>('/User/profile', {
                 params: pickBy({
                     userName
                 })
             });
             return data;
         }catch(e: any){
-            return rejectWithValue(e.response.status)
+            const errorResponse: ErrorParams = {
+                status: e.response?.status,
+                message: e.response?.data.message
+            }
+            return rejectWithValue(errorResponse)
         }
     });
 

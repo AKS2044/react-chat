@@ -4,7 +4,7 @@ export interface LoginState {
     data: LoginPayloadParams,
     error: {message: string}[],
     profile: ProfilePayloadParams,
-    serverError: number,
+    serverError: ErrorParams,
     profileStatus: Status,
     urlPhoto: string,
     uploadPhotoStatus: Status,
@@ -18,6 +18,12 @@ export interface LoginParams {
     password: string,
     rememberMe: boolean,
 }
+
+export interface ErrorParams {
+    status: number | undefined,
+    message: string
+}
+
 
 export interface ProfilePayloadParams {
     email: string,

@@ -10,6 +10,9 @@
     width: 100%;
     height: 60px;
     background: $header;
+    @media (max-width: 670px) {
+        height: 50px;
+    }
     &__link{
         width: 250px;
         font-size: 1.8rem;

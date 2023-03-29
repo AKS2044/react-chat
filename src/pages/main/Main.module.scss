@@ -2,8 +2,15 @@
 
 .container{
     margin: 60px 0 130px 0;
-    width: 100%;
+    top: 600px;
     height: 100%;
+    width: 80vw;
+    @media (max-width: 1000px) {
+        width: 100vw;
+    }
+    @media (max-width: 670px) {
+        margin-top: 80px;
+    }
 }
 
 .block{
@@ -30,8 +37,7 @@
         flex-direction: column;
         padding: 10px;
         border-radius: 12px;
-        min-width: 100px;
-        max-width: 66%;
+        max-width: 70%;
         background-color: $color2;
         &__text{
             font-size: 1.1rem;
@@ -53,15 +59,18 @@
     position: fixed;
     padding: 20px;
     bottom: 0;
-    width: 100%;
+    width: 80vw;
     height: 130px;
     background-color: $color2;
+    @media (max-width: 670px) {
+        width: 100vw;
+    }
     &__block{
         display: flex;
         align-items: center;
         height: 100%;
         &__textarea{
-            width: 60%;
+            width: 70%;
             height: 100%;
             margin-right: 10px;
             background-color: $background;
@@ -72,6 +81,36 @@
             border-radius: 12px;
             resize: none;
         }
+    }
+}
+
+.panel{
+    display: none;
+    position: fixed;
+    padding: 0 15px;
+    z-index: 100;
+    top: 50px;
+    height: 30px;
+    width: 100%;
+    background-color: $color2__hover;
+    &__members{
+        font-weight: 300;
+        margin-right: 10px;
+    }
+    &__all{
+        opacity: 0.6;
+        border: 1px solid $text;
+        border-radius: 6px;
+        padding: 0 5px;
+        font-weight: 300;
+        &:hover{
+            opacity: 1;
+            transition: all linear 0.2s;
+        }
+    }
+    @media (max-width: 670px) {
+        display: flex;
+        align-items: center;
     }
 }
 

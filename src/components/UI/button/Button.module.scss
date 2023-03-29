@@ -17,4 +17,7 @@
     &:disabled{
         background-color: $color2__hover;
     }
+    @media (max-width: 870px) {
+        width: 80px;
+    }
 }
