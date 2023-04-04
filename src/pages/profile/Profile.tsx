@@ -96,7 +96,7 @@ const Profile = () => {
 
     if(!isAuth && statusAuth === 'error')
     return <Navigate to={fromPage} />;
-
+    
     return (
         <>
         {profileStatus === "loading" && <Loader />}
