@@ -3,12 +3,14 @@ import Button from '../../components/UI/button/Button';
 import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
 import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
+import smile from '../../images/smile.svg';
 import Header from '../../components/header/Header';
 import Menu from '../../components/menu/Menu';
 import { Navigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectIsAuth, selectLoginData } from '../../redux/Auth/selectors';
 import Loader from '../../components/loader/Loader';
+import reactStringReplace from 'react-string-replace';
 import { useAppDispatch } from '../../redux/store';
 import { 
     fetchAddMessageChat, 
@@ -28,18 +30,21 @@ type MessageProps = {
 }
 
 const Main = () => {
+    const pathSmiles = [1,2,3,4,5,6,7,8,9];
     const { 
-        register, 
         handleSubmit, 
         formState: {isValid}} = useForm<MessageProps>({
         mode: 'onChange'
     });
 
     const [ connection, setConnection ] = useState<HubConnection>();
+    const [text, setText] = useState('');
     const [ connected, setConnected ] = useState<string[]>([]);
     const [ disconnected, setDisconnected ] = useState<string[]>([]);
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [ chatik, setChatik ] = useState<MessageProps[]>([]);
     const [ connectedInfo, setConnectedInfo ] = useState(false);
+    const [ smilesOpen, setSmilesOpen ] = useState(false);
     const [ watchAll, setWatchAll ] = useState(false);
     const [ disconnectedInfo, setDisconnectedInfo ] = useState(false);
     const dispatch = useAppDispatch();
@@ -131,7 +136,11 @@ const Main = () => {
             window.removeEventListener('resize', handleWindowResize);
         };
     }, []);
-    
+
+    const onChangeInput = (event: React.ChangeEvent<HTMLTextAreaElement>, set: React.Dispatch<React.SetStateAction<string>>) => {
+        set(event.target.value);
+    };
+
     const OnClickDeleteMessage = (messageId: number) => {
         dispatch(fetchDeleteMessage({messageId}));
     }
@@ -139,13 +148,19 @@ const Main = () => {
     const onClickJoinChat = async (chatId: number) => {
         await dispatch(fetchEnterTheChat({userId: data.id, chatId: chatId}));
     }
+
+    const onClickAddSmile = async (smile: string) => {
+        //setText(text.concat(smile));
+        console.log(text)
+        console.log(text.concat(smile))
+    }
     
-    const onSubmit = async (values: MessageProps) => {
+    const onSubmit = async () => {
         const message: MessageParams = {
             id: 0,
             chatId: Number(params?.id),
             userName: data.userName,
-            message: values.message,
+            message: text,
             dateWrite: date.toLocaleTimeString(),
             pathPhoto: data.pathPhoto
         }
@@ -160,6 +175,7 @@ const Main = () => {
         }else {
             alert('No connection to server yet.');
         }
+        setText('');
     }
     
     if(!isAuth && statusAuth === "error"){
@@ -186,7 +202,9 @@ const Main = () => {
                             <div key={m.id} className={m.userName === data.userName ? `${cl.block} ${cl.block__your}`: `${cl.block}`}>
                             <div className={m.userName === data.userName ? `${cl.block__message} ${cl.message__your}`: `${cl.block__message}`}>
                                 <div className={cl.block__message__name}>{m.userName}</div>
-                                <div className={cl.block__message__text}>{m.message}</div>
+                                <div className={cl.block__message__text}>{reactStringReplace(m.message, /:(.+?):/g, (match, i) => (
+                                    <img key={i} className={cl.text__block__emojies__emoji} alt='smile' src={`/assets/smiles/${match}.png`} />
+                                ))}</div>
                                 <div className={cl.block__message__date}>{m.dateWrite}</div>
                                 {(m.userName === data.userName || data.roles.find((r) => r === "ADMIN")) 
                                 && 
@@ -200,7 +218,9 @@ const Main = () => {
                             <div key={i} className={m.userName === data.userName ? `${cl.block} ${cl.block__your}`: `${cl.block}`}>
                                 <div className={m.userName === data.userName ? `${cl.block__message} ${cl.message__your}`: `${cl.block__message}`}>
                                     <div className={cl.block__message__name}>{m.userName}</div>
-                                    <div className={cl.block__message__text}>{m.message}</div>
+                                    <div className={cl.block__message__text}>{reactStringReplace(m.message, /:(.+?):/g, (match, i) => (
+                                        <img key={i} className={cl.text__block__emojies__emoji} alt='smile' src={`/assets/smiles/${match}.png`} />
+                                    ))}</div>
                                     <div className={cl.block__message__date}>{m.dateWrite}</div>
                                 </div>
                                 <img src={`https://localhost:7275/${m.pathPhoto}`} alt='Nickname' className={cl.block__photo} />
@@ -223,8 +243,26 @@ const Main = () => {
                             <div className={cl.text__block}>
                                 <textarea
                                 className={cl.text__block__textarea}
-                                {...register('message')} />
-                                <Button disabled={isValid}>Send</Button>
+                                ref={textAreaRef}
+                                value={text}
+                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChangeInput(e, setText)} />
+                                <Button disabled={Boolean(text)}>Send</Button>
+                                {windowWidth < 1000
+                                ? <img 
+                                className={cl.text__block__icon} 
+                                src={smile} 
+                                alt='Open smiles' 
+                                title='Open smiles'
+                                onClick={() => setSmilesOpen(!smilesOpen)} />
+                                : <div className={cl.text__block__emojies}>
+                                    {pathSmiles.map((n,i) =>
+                                    <img 
+                                    key={i} 
+                                    className={cl.text__block__emojies__emoji} 
+                                    alt='smile' 
+                                    src={`/assets/smiles/smile${n}.png`}
+                                    onClick={() => setText(text.concat(`:smile${n}:`))} />)}
+                                </div>}
                             </div>
                             : 
                             <div 
@@ -232,6 +270,16 @@ const Main = () => {
                             className={cl.text__join}
                             title='Enter the chat'>
                                 Join to chat
+                            </div>}
+                            {(windowWidth < 1000 && smilesOpen) && 
+                                <div className={cl.text__block__emojies}>
+                                {pathSmiles.map((n,i) =>
+                                <img 
+                                key={i} 
+                                className={cl.text__block__emojies__emoji} 
+                                alt='smile' 
+                                src={`/assets/smiles/smile${n}.png`}
+                                onClick={() => setText(text.concat(`:smile${n}:`))} />)}
                             </div>}
                         </form>
                     </div>
