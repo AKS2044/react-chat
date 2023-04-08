@@ -39,18 +39,18 @@ const Login = () => {
             instance.defaults.headers.common['Authorization'] = window.localStorage.getItem('token');
         }
         }, [statusLogin]);
-
+    console.log(error)
     if(isAuth){
         return <Navigate to={fromPage} />;
     }
     return (
         <div className={cl.login}>
             <div className={cl.login__title}>Welcome to the React Chat</div>
-            {statusLogin === 'error' && <>{error.map((e, i) => <Alert key={i} severity="error">
-                    <strong>{e.message}</strong>
-                    </Alert>)}</>}
             <form onSubmit={handleSubmit(onSubmit)} className={cl.login__form}>
                 <div className={cl.login__form__text}>Log in</div>
+                {statusLogin === 'error' && <>{error.map((e, i) => <Alert key={i} severity="error">
+                    <strong>{e.message}</strong>
+                    </Alert>)}</>}
                 <input
                 className={cl.input}
                 placeholder='Login'

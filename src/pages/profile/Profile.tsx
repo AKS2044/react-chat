@@ -124,6 +124,7 @@ const Profile = () => {
                         <div className={cl.profile__block__info__text}>Role:</div>
                         <div className={cl.profile__block__info__text}>{profile.roles.map((r) => r.toLowerCase())}</div>
                     </div>
+                    <Link to='/' className={cl.profile__block__main}>Main</Link>
                 </div>}
                 <div className={cl.search}>
                     <div className={cl.search__block}>

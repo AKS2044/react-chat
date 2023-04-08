@@ -25,9 +25,8 @@ const Alert = ({children, severity, classes}: AlertProps) => {
                 const successStyle: CssProps = {border: '2px solid #239328', background: '#0d310e', imgIcon: successIcon};
                 setStyle(successStyle)
                 break;}
-
             case Severity.error:{
-                const successStyle: CssProps = {border: '2px solid #932323', background: '#310d0d', imgIcon: errorIcon};
+                const successStyle: CssProps = {border: '2px solid #c12f2f', background: '#a32121', imgIcon: errorIcon};
                 setStyle(successStyle)
                 break;}
             default:

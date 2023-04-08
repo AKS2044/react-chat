@@ -7,17 +7,17 @@ import { ErrorParams, LoginParams, LoginPayloadParams, ProfilePayloadParams, Reg
 
 export const fetchLogin = createAsyncThunk<LoginPayloadParams, LoginParams, {rejectValue: {message: string}[]}>(
     'login/fetchLoginStatus',
-    async (params) => {
+    async (params, { rejectWithValue }) => {
         const { userName, password, rememberMe } = params;
         try {
-            const { data, status,statusText } = await axios.post<LoginPayloadParams>('/User/login', {
+            const { data } = await axios.post<LoginPayloadParams>('/User/login', {
                 userName,
                 password,
                 rememberMe,
             });
             return data;
         }catch(err: any){
-            throw new Error(err.response.data.message);
+            return rejectWithValue(err.response.data)
         }
     });
 

@@ -81,6 +81,24 @@
         @media (max-width: 510px) {
             border-right: none;
         }
+        &__main{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 30px;
+            width: 100%;
+            color: $text;
+            font-size: 1rem;
+            border-width: 0 1px 1px 1px;
+            border-style: solid;
+            border-color: $header;
+            background-color: $background2;
+            outline: none;
+            &:hover{
+                transition: all linear 0.2s;
+                background-color: $header;
+            }
+        }
         &__photo{
             border: 3px solid $header;
             border-radius: 50%;
@@ -88,7 +106,7 @@
             @media (max-width: 800px) {
                 width: 124px;
             }
-            @media (max-width: 390px) {
+            @media (max-width: 510px) {
                 width: 84px;
             }
         }
@@ -111,6 +129,8 @@
 
 .search{
     width: 100%;
+    overflow: hidden auto;
+    margin-bottom: 9px;
     &__block{
         display: flex;
         flex-direction: column;
@@ -129,10 +149,6 @@
                 height: 30px;
                 border-top-right-radius: 0;
             }
-            @media (max-width: 390px) {
-                height: 30px;
-                border-top-right-radius: 0;
-            }
         }
         &__input{
             position: relative;
@@ -145,7 +161,7 @@
             padding: 0 10px;
             border-bottom: 1px solid $header;
             color: $text;
-            &__clear{
+            &__clear{ 
                 position: absolute;
                 cursor: pointer;
                 right: 10px;
@@ -159,8 +175,6 @@
             }
         }
     }
-    overflow: hidden auto;
-    border-radius: 0 0 12px 12px;
     &__items{
         display: flex;
         justify-content: space-between;
@@ -178,8 +192,10 @@
                 background-color: $color2__hover;
             }
             &__photo{
+                border: 2px solid #F47B7B;
+                border-radius: 50%;
                 width: 48px;
-                @media (max-width: 390px) {
+                @media (max-width: 510px) {
                     width: 32px;
                 }
             }
