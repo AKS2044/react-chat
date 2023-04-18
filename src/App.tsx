@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { RouterProvider, useRouteError } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
 import './App.scss';
 import { fetchAuth } from './redux/Auth/asyncActions';
 import { selectLoginData } from './redux/Auth/selectors';
@@ -9,7 +9,7 @@ import router from './router';
 
 function App() {
   const dispatch = useAppDispatch();
-  const { statusLogin, statusRegister, serverError } = useSelector(selectLoginData);
+  const { statusLogin, statusRegister } = useSelector(selectLoginData);
   
     
   useEffect(() => {

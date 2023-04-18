@@ -20,7 +20,8 @@ export interface ChatState {
 
 export interface MessageParams {
     id: number,
-    chatId: number
+    chatId: number,
+    chatName: string,
     userName: string,
     message: string,
     dateWrite: string,

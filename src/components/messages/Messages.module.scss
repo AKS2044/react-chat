@@ -1,0 +1,66 @@
+@import "/src/colors";
+
+.block{
+    display: flex;
+    align-items: center;
+    margin: 20px;
+    &__photo{
+        display: flex;
+        border-radius: 50%;
+        border: 2px solid $header;
+        width: 48px;
+        height: 48px;
+        order: 2;
+        &:hover{
+            transition: all 0.2s linear;
+            width: 64px;
+            height: 64px;
+        }
+    }
+    &__message{
+        margin: 0 10px;
+        display: flex;
+        position: relative;
+        order: 3;
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 5px 10px;
+        border-radius: 12px;
+        max-width: 70%;
+        min-width: 90px;
+        background: linear-gradient(90deg, rgba(244,123,123,1) 0%, rgba(184,102,161,1) 23%, rgba(160,104,205,1) 45%, rgba(165,98,189,1) 69%, rgba(189,98,159,1) 100%);
+        &__delete{
+            cursor: pointer;
+            position: absolute;
+            right: 5px;
+            top: 3px;
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+        &__text{
+            margin-bottom: 5px;
+        }
+        &__name{
+            font-size: 0.8rem;
+            opacity: 0.7;
+            text-align: end;
+        }
+        &__date{
+            font-size: 0.8rem;
+            font-weight: 300;
+        }
+    }
+}
+
+.block__your{
+    justify-content: flex-end;
+}
+
+.message__your{
+    order: 2;
+}
+
+.emoji{
+    margin: 2px 2px 0 2px;
+    width: 20px;
+}

@@ -21,9 +21,11 @@ import {
     fetchUsersInChat } from '../../redux/Chat/asyncActions';
 import { MessageParams } from '../../redux/Chat/types';
 import { selectChatData } from '../../redux/Chat/selectors';
+import Messages from '../../components/messages/Messages';
 
 type MessageProps = {
     userName: string,
+    chatName: string,
     message: string,
     dateWrite: string,
     pathPhoto: string
@@ -33,7 +35,7 @@ const Main = () => {
     const pathSmiles = [1,2,3,4,5,6,7,8,9];
     const { 
         handleSubmit, 
-        formState: {isValid}} = useForm<MessageProps>({
+        formState: {}} = useForm<MessageProps>({
         mode: 'onChange'
     });
 
@@ -57,7 +59,8 @@ const Main = () => {
         usersChat,
         statusDeleteMessage,
         statusLeaveChat,
-        statusEnterChat  } = useSelector(selectChatData);
+        statusEnterChat,
+        statusGetChat  } = useSelector(selectChatData);
     const latestChat = useRef<MessageProps[]>([]);
     const dateNow = Date.now();
     const date = new Date(dateNow);const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -71,9 +74,10 @@ const Main = () => {
         await dispatch(fetchUsersInChat({chatId: Number(params.id)}));
     }
     
+    //Hub connection builder
     useEffect(() => {
         const newConnection = new HubConnectionBuilder()
-            .withUrl('https://localhost:7275/chat', { accessTokenFactory: () => token ? token : 'Unauthorized' })
+            .withUrl('https://localhost:7275/chat', { accessTokenFactory: () => token ? token : 'Unauthorized', headers: {keys: 'ddd'} })
             .withAutomaticReconnect()
             .build();
         setConnection(newConnection);
@@ -83,11 +87,11 @@ const Main = () => {
         if (connection) {
             connection.start()
                 .then(() => {
-                    connection.on('ConnectedAsync', message => {
+                    connection.invoke('Enter', (groupName: 'sdad') => {
                         const info: string[] = [];
                         if(info){
                             setConnectedInfo(true);
-                            info.push(message);
+                            //info.push(chatName);
                             setConnected(info);
                             const timer = setTimeout(() => {
                                 setConnectedInfo(false);
@@ -141,18 +145,8 @@ const Main = () => {
         set(event.target.value);
     };
 
-    const OnClickDeleteMessage = (messageId: number) => {
-        dispatch(fetchDeleteMessage({messageId}));
-    }
-
     const onClickJoinChat = async (chatId: number) => {
         await dispatch(fetchEnterTheChat({userId: data.id, chatId: chatId}));
-    }
-
-    const onClickAddSmile = async (smile: string) => {
-        //setText(text.concat(smile));
-        console.log(text)
-        console.log(text.concat(smile))
     }
     
     const onSubmit = async () => {
@@ -160,6 +154,7 @@ const Main = () => {
             id: 0,
             chatId: Number(params?.id),
             userName: data.userName,
+            chatName: chat.nameChat,
             message: text,
             dateWrite: date.toLocaleTimeString(),
             pathPhoto: data.pathPhoto
@@ -198,7 +193,8 @@ const Main = () => {
                 {(windowWidth > 670 || watchAll) && <Menu items={usersChat}/>}
                 {(!watchAll || windowWidth > 670) && <div className={cl.container}>
                     <div className={cl.messages}>
-                        {messages.map((m) => 
+                        <Messages {...messages} />
+                        {/* {messages.map((m) => 
                             <div key={m.id} className={m.userName === data.userName ? `${cl.block} ${cl.block__your}`: `${cl.block}`}>
                             <div className={m.userName === data.userName ? `${cl.block__message} ${cl.message__your}`: `${cl.block__message}`}>
                                 <div className={cl.block__message__name}>{m.userName}</div>
@@ -213,8 +209,8 @@ const Main = () => {
                                 </span>}
                             </div>
                                 <img src={`https://localhost:7275/${m.pathPhoto}`} alt='User' className={cl.block__photo} />
-                            </div>)} 
-                        {chatik.map((m, i) => 
+                            </div>)}  */}
+                        {/* {chatik.map((m, i) => 
                             <div key={i} className={m.userName === data.userName ? `${cl.block} ${cl.block__your}`: `${cl.block}`}>
                                 <div className={m.userName === data.userName ? `${cl.block__message} ${cl.message__your}`: `${cl.block__message}`}>
                                     <div className={cl.block__message__name}>{m.userName}</div>
@@ -230,7 +226,7 @@ const Main = () => {
                                 <div className={cl.block__message}>
                                     <div className={cl.block__message__name}>{m}</div>
                                 </div>
-                            </div>)}</>}
+                            </div>)}</>} */}
                         {disconnectedInfo && <>{disconnected.map((m, i) => 
                             <div key={i} className={cl.block}>
                                 <div className={cl.block__message}>
