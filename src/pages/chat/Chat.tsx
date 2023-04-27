@@ -1,6 +1,6 @@
 import cl from './Chat.module.scss';
 import Button from '../../components/UI/button/Button';
-import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
+import { HubConnectionBuilder, HubConnection, MessageType } from '@microsoft/signalr';
 import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import smile from '../../images/smile.svg';
@@ -10,7 +10,6 @@ import { Navigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectIsAuth, selectLoginData } from '../../redux/Auth/selectors';
 import Loader from '../../components/loader/Loader';
-import reactStringReplace from 'react-string-replace';
 import { useAppDispatch } from '../../redux/store';
 import { 
     fetchAddMessageChat, 
@@ -22,6 +21,7 @@ import {
 import { MessageParams } from '../../redux/Chat/types';
 import { selectChatData } from '../../redux/Chat/selectors';
 import Messages from '../../components/messages/Messages';
+import reactStringReplace from 'react-string-replace';
 
 type MessageProps = {
     userName: string,
@@ -35,16 +35,17 @@ const Main = () => {
     const pathSmiles = [1,2,3,4,5,6,7,8,9];
     const { 
         handleSubmit, 
-        formState: {}} = useForm<MessageProps>({
+        formState: {}} = useForm<MessageParams>({
         mode: 'onChange'
     });
-
+    
+    const [ idMessage, setIdMessage] = useState(1);
     const [ connection, setConnection ] = useState<HubConnection>();
     const [text, setText] = useState('');
     const [ connected, setConnected ] = useState<string[]>([]);
     const [ disconnected, setDisconnected ] = useState<string[]>([]);
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
-    const [ chatik, setChatik ] = useState<MessageProps[]>([]);
+    const [ chatik, setChatik ] = useState<MessageParams[]>([]);
     const [ connectedInfo, setConnectedInfo ] = useState(false);
     const [ smilesOpen, setSmilesOpen ] = useState(false);
     const [ watchAll, setWatchAll ] = useState(false);
@@ -60,8 +61,8 @@ const Main = () => {
         statusDeleteMessage,
         statusLeaveChat,
         statusEnterChat,
-        statusGetChat  } = useSelector(selectChatData);
-    const latestChat = useRef<MessageProps[]>([]);
+        statusChatMes  } = useSelector(selectChatData);
+    const latestChat = useRef<MessageParams[]>([]);
     const dateNow = Date.now();
     const date = new Date(dateNow);const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     
@@ -74,10 +75,14 @@ const Main = () => {
         await dispatch(fetchUsersInChat({chatId: Number(params.id)}));
     }
     
+    useEffect(() => {
+        getMessages();
+    }, [statusDeleteMessage, statusLeaveChat, statusEnterChat]);
+    
     //Hub connection builder
     useEffect(() => {
         const newConnection = new HubConnectionBuilder()
-            .withUrl('https://localhost:7275/chat', { accessTokenFactory: () => token ? token : 'Unauthorized', headers: {keys: 'ddd'} })
+            .withUrl('https://localhost:7275/chat', { accessTokenFactory: () => token ? token : 'Unauthorized' })
             .withAutomaticReconnect()
             .build();
         setConnection(newConnection);
@@ -87,11 +92,17 @@ const Main = () => {
         if (connection) {
             connection.start()
                 .then(() => {
-                    connection.invoke('Enter', (groupName: 'sdad') => {
+                    connection.invoke('OnConnectedAsync', 'chat' + params.id);
+                })
+                .then(() => {
+                    connection.invoke('OnDisconnectedAsync', null, 'chat' + params.id);
+                })
+                .then(() => {
+                    connection.on('ConnectedAsync', message => {
                         const info: string[] = [];
                         if(info){
                             setConnectedInfo(true);
-                            //info.push(chatName);
+                            info.push(message);
                             setConnected(info);
                             const timer = setTimeout(() => {
                                 setConnectedInfo(false);
@@ -103,20 +114,18 @@ const Main = () => {
                 .then(() => {
                     connection.on('DisconnectedAsync', message => {
                         const info: string[] = [];
-                        if(info){
-                            setDisconnectedInfo(true);
-                            info.push(message);
-                            setDisconnected(info);
-                            const timer = setTimeout(() => {
-                                setDisconnectedInfo(false);
-                            }, 2000);
-                            return () => clearTimeout(timer);
-                        }
+                        setDisconnectedInfo(true);
+                        info.push(message);
+                        setDisconnected(info);
+                        const timer = setTimeout(() => {
+                            setDisconnectedInfo(false);
+                        }, 2000);
+                        return () => clearTimeout(timer);
                     });
                 })
                 .then(() => {
                     connection.on('ReceiveMessage', message => {
-                        const updatedChat: MessageProps[] = [...latestChat.current];
+                        const updatedChat: MessageParams[] = [...latestChat.current];
                         updatedChat.push(message);
                         setChatik(updatedChat);
                     });
@@ -124,10 +133,6 @@ const Main = () => {
                 .catch(e => console.log('Connection failed: ', e));
         }
     }, [connection]);
-
-    useEffect(() => {
-        getMessages();
-    }, [statusDeleteMessage, statusLeaveChat, statusEnterChat]);
     
     useEffect(() => {
         function handleWindowResize() {
@@ -150,8 +155,9 @@ const Main = () => {
     }
     
     const onSubmit = async () => {
+        setIdMessage(idMessage + 1)
         const message: MessageParams = {
-            id: 0,
+            id: idMessage,
             chatId: Number(params?.id),
             userName: data.userName,
             chatName: chat.nameChat,
@@ -162,7 +168,7 @@ const Main = () => {
         await dispatch(fetchAddMessageChat(message));
         if (connection?.start) {
             try {
-                await connection?.send('SendMessage', message);
+                await connection.send('SendMessage', message);
             }
             catch(e) {
                 console.log(e);
@@ -193,23 +199,8 @@ const Main = () => {
                 {(windowWidth > 670 || watchAll) && <Menu items={usersChat}/>}
                 {(!watchAll || windowWidth > 670) && <div className={cl.container}>
                     <div className={cl.messages}>
-                        <Messages {...messages} />
-                        {/* {messages.map((m) => 
-                            <div key={m.id} className={m.userName === data.userName ? `${cl.block} ${cl.block__your}`: `${cl.block}`}>
-                            <div className={m.userName === data.userName ? `${cl.block__message} ${cl.message__your}`: `${cl.block__message}`}>
-                                <div className={cl.block__message__name}>{m.userName}</div>
-                                <div className={cl.block__message__text}>{reactStringReplace(m.message, /:(.+?):/g, (match, i) => (
-                                    <img key={i} className={cl.text__block__emojies__emoji} alt='smile' src={`/assets/smiles/${match}.png`} />
-                                ))}</div>
-                                <div className={cl.block__message__date}>{m.dateWrite}</div>
-                                {(m.userName === data.userName || data.roles.find((r) => r === "ADMIN")) 
-                                && 
-                                <span className={cl.block__message__delete} onClick={() => OnClickDeleteMessage(m.id)}>
-                                    ⛌
-                                </span>}
-                            </div>
-                                <img src={`https://localhost:7275/${m.pathPhoto}`} alt='User' className={cl.block__photo} />
-                            </div>)}  */}
+                        {/* <Messages {...messages} /> */}
+                        <Messages {...chatik} />
                         {/* {chatik.map((m, i) => 
                             <div key={i} className={m.userName === data.userName ? `${cl.block} ${cl.block__your}`: `${cl.block}`}>
                                 <div className={m.userName === data.userName ? `${cl.block__message} ${cl.message__your}`: `${cl.block__message}`}>
@@ -220,13 +211,13 @@ const Main = () => {
                                     <div className={cl.block__message__date}>{m.dateWrite}</div>
                                 </div>
                                 <img src={`https://localhost:7275/${m.pathPhoto}`} alt='Nickname' className={cl.block__photo} />
-                            </div>)}
+                            </div>)} */}
                         {connectedInfo && <>{connected.map((m, i) => 
                             <div key={i} className={cl.block}>
                                 <div className={cl.block__message}>
                                     <div className={cl.block__message__name}>{m}</div>
                                 </div>
-                            </div>)}</>} */}
+                            </div>)}</>}
                         {disconnectedInfo && <>{disconnected.map((m, i) => 
                             <div key={i} className={cl.block}>
                                 <div className={cl.block__message}>

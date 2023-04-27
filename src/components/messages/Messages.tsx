@@ -23,7 +23,6 @@ const Messages: React.FC<MessageParams[]> = (messages) => {
     }, []);
 
     useEffect(() => {
-        console.log(messageRef)
         if(messageRef && messageRef.current){
             const {scrollHeight, clientHeight} = messageRef.current;
             messageRef.current.scrollTo({
@@ -36,8 +35,8 @@ const Messages: React.FC<MessageParams[]> = (messages) => {
 
     return (
         <div ref={messageRef} >
-            {Object.values(messages).map((m) => 
-                <div key={m.id} className={m.userName === data.userName ? `${cl.block} ${cl.block__your}`: `${cl.block}`}>
+            {Object.values(messages).map((m,i) => 
+                <div key={i} className={m.userName === data.userName ? `${cl.block} ${cl.block__your}`: `${cl.block}`}>
                     <div className={m.userName === data.userName ? `${cl.block__message} ${cl.message__your}`: `${cl.block__message}`}>
                         <div className={cl.block__message__name}>{m.userName}</div>
                         <div className={cl.block__message__text}>{reactStringReplace(m.message, /:(.+?):/g, (match, i) => (
