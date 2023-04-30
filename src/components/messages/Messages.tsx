@@ -18,18 +18,8 @@ const Messages: React.FC<MessageParams[]> = (messages) => {
     
     useEffect(() => {
         if(messageRef && messageRef.current){
-            window.scrollTo(0, messageRef.current.clientHeight)
-        }
-    }, []);
-
-    useEffect(() => {
-        if(messageRef && messageRef.current){
-            const {scrollHeight, clientHeight} = messageRef.current;
-            messageRef.current.scrollTo({
-                left: 0, 
-                top: scrollHeight - clientHeight,
-                behavior: 'smooth'
-            });
+            const {clientHeight} = messageRef.current;
+            window.scrollTo(0, clientHeight);
         }
     }, [messages]);
 

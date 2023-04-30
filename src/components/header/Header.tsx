@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import cl from './Header.module.scss';
 import logout from '../../images/logout.svg'
 import { useAppDispatch } from '../../redux/store';
@@ -13,10 +13,14 @@ type HeaderProps = {
 
 const Header: React.FC<HeaderProps> = (props) => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     
     const onClickLeaveChat = async () => {
         const checkAlert = window.confirm('Do you really want to leave the chat?');
-        checkAlert && await dispatch(fetchLeaveTheChat({userId: props.userId, chatId: props.chatId}));
+        if(checkAlert){
+            await dispatch(fetchLeaveTheChat({userId: props.userId, chatId: props.chatId}));
+            navigate('/profile');
+        }
     }
     return (
         <div className={cl.header}>

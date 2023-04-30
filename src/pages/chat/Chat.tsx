@@ -61,10 +61,11 @@ const Main = () => {
         statusDeleteMessage,
         statusLeaveChat,
         statusEnterChat,
-        statusChatMes  } = useSelector(selectChatData);
+        statusChatMes } = useSelector(selectChatData);
     const latestChat = useRef<MessageParams[]>([]);
     const dateNow = Date.now();
-    const date = new Date(dateNow);const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const date = new Date(dateNow);
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     
     latestChat.current = chatik;
     const token = localStorage?.getItem('token');
@@ -74,10 +75,10 @@ const Main = () => {
         await dispatch(fetchGetChat({chatId: Number(params.id)}));
         await dispatch(fetchUsersInChat({chatId: Number(params.id)}));
     }
-    
+
     useEffect(() => {
         getMessages();
-    }, [statusDeleteMessage, statusLeaveChat, statusEnterChat]);
+    }, [statusDeleteMessage, statusChatMes, statusEnterChat]);
     
     //Hub connection builder
     useEffect(() => {
@@ -95,9 +96,6 @@ const Main = () => {
                     connection.invoke('OnConnectedAsync', 'chat' + params.id);
                 })
                 .then(() => {
-                    connection.invoke('OnDisconnectedAsync', null, 'chat' + params.id);
-                })
-                .then(() => {
                     connection.on('ConnectedAsync', message => {
                         const info: string[] = [];
                         if(info){
@@ -112,27 +110,36 @@ const Main = () => {
                     });
                 })
                 .then(() => {
-                    connection.on('DisconnectedAsync', message => {
-                        const info: string[] = [];
-                        setDisconnectedInfo(true);
-                        info.push(message);
-                        setDisconnected(info);
-                        const timer = setTimeout(() => {
-                            setDisconnectedInfo(false);
-                        }, 2000);
-                        return () => clearTimeout(timer);
-                    });
-                })
-                .then(() => {
                     connection.on('ReceiveMessage', message => {
                         const updatedChat: MessageParams[] = [...latestChat.current];
                         updatedChat.push(message);
                         setChatik(updatedChat);
                     });
                 })
-                .catch(e => console.log('Connection failed: ', e));
+                .catch(err => console.log('Connection failed: ', err));
+
+                // connection.onreconnected(err => {
+                //     console.log('Connection failed: ', err)
+                //     connection.invoke('OnDisconnectedAsync', null, 'chat' + params.id);
+                //     connection.on('DisconnectedAsync', message => {
+                //                     const info: string[] = [];
+                //                     setDisconnectedInfo(true);
+                //                     info.push(message);
+                //                     setDisconnected(info);
+                //                     const timer = setTimeout(() => {
+                //                         setDisconnectedInfo(false);
+                //                     }, 2000);
+                //                     return () => clearTimeout(timer);
+                //                 });
+                // })
         }
     }, [connection]);
+
+    useEffect(() => {
+        if(messages.length){
+            setChatik(messages)
+        }
+    }, [messages]);
     
     useEffect(() => {
         function handleWindowResize() {
@@ -156,8 +163,10 @@ const Main = () => {
     
     const onSubmit = async () => {
         setIdMessage(idMessage + 1)
+        const last = chatik.length ? chatik[chatik.length - 1] : messages[messages.length - 1];
+        
         const message: MessageParams = {
-            id: idMessage,
+            id: last.id + 1,
             chatId: Number(params?.id),
             userName: data.userName,
             chatName: chat.nameChat,
@@ -165,6 +174,7 @@ const Main = () => {
             dateWrite: date.toLocaleTimeString(),
             pathPhoto: data.pathPhoto
         }
+
         await dispatch(fetchAddMessageChat(message));
         if (connection?.start) {
             try {
@@ -180,7 +190,7 @@ const Main = () => {
     }
     
     if(!isAuth && statusAuth === "error"){
-        return <Navigate to='login' />;
+        return <Navigate to='/login' />;
     }
     return (
         <>
@@ -199,19 +209,7 @@ const Main = () => {
                 {(windowWidth > 670 || watchAll) && <Menu items={usersChat}/>}
                 {(!watchAll || windowWidth > 670) && <div className={cl.container}>
                     <div className={cl.messages}>
-                        {/* <Messages {...messages} /> */}
                         <Messages {...chatik} />
-                        {/* {chatik.map((m, i) => 
-                            <div key={i} className={m.userName === data.userName ? `${cl.block} ${cl.block__your}`: `${cl.block}`}>
-                                <div className={m.userName === data.userName ? `${cl.block__message} ${cl.message__your}`: `${cl.block__message}`}>
-                                    <div className={cl.block__message__name}>{m.userName}</div>
-                                    <div className={cl.block__message__text}>{reactStringReplace(m.message, /:(.+?):/g, (match, i) => (
-                                        <img key={i} className={cl.text__block__emojies__emoji} alt='smile' src={`/assets/smiles/${match}.png`} />
-                                    ))}</div>
-                                    <div className={cl.block__message__date}>{m.dateWrite}</div>
-                                </div>
-                                <img src={`https://localhost:7275/${m.pathPhoto}`} alt='Nickname' className={cl.block__photo} />
-                            </div>)} */}
                         {connectedInfo && <>{connected.map((m, i) => 
                             <div key={i} className={cl.block}>
                                 <div className={cl.block__message}>
