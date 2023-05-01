@@ -28,6 +28,16 @@
             border-right: none;
             width: 100vw;
         }
+        &__online{
+            color:#1bc618;
+            font-size: 0.8rem;
+            font-weight: 300;
+        }
+        &__offline{
+            opacity: 0.5;
+            font-size: 0.7rem;
+            font-weight: 300;
+        }
         &__person{
             min-height: 60px;
             padding: 0 5px;
@@ -42,16 +52,14 @@
                 background-color: $color2__hover;
             }
             &__photo{
+                border-radius: 50%;
+                border: 2px solid $header;
                 width: 48px;
                 height: 48px;
                 margin-right: 10px;
             }
             &__nick{
                 font-size: 1.2rem;
-            }
-            &__online{
-                font-size: 0.7rem;
-                font-weight: 300;
             }
         }
     }

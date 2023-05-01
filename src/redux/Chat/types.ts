@@ -1,5 +1,4 @@
 import { Status } from "../../enum/EnumStatus";
-
 export interface ChatState {
     messages: MessageParams[],
     userChats: ChatParams[],
@@ -17,7 +16,6 @@ export interface ChatState {
     statusChatMes: Status,
     statusAddChat: Status,
 }
-
 export interface MessageParams {
     id: number,
     chatId: number,
@@ -27,18 +25,15 @@ export interface MessageParams {
     dateWrite: string,
     pathPhoto: string
 }
-
 export interface ChatParams {
     id: number,
     nameChat: string,
     chatCreator: string,
     dateCreat: string
 }
-
 export interface AddChatParams {
     nameChat: string,
 }
-
 export interface UsersChatPayloadParams {
     id: string,
     email: string,
@@ -46,8 +41,13 @@ export interface UsersChatPayloadParams {
     pathPhoto: string,
     dateReg: string
 }
-
 export interface EnterLeaveChatPayloadParams {
     userId: string,
     chatId: number,
+}
+
+export interface UsersCheck {
+    connectedId: string | null,
+    userName?: string,
+    chatName?: string,
 }

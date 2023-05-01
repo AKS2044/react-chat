@@ -1,6 +1,6 @@
 import cl from './Chat.module.scss';
 import Button from '../../components/UI/button/Button';
-import { HubConnectionBuilder, HubConnection, MessageType } from '@microsoft/signalr';
+import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
 import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import smile from '../../images/smile.svg';
@@ -18,18 +18,9 @@ import {
     fetchGetChat, 
     fetchMessageList, 
     fetchUsersInChat } from '../../redux/Chat/asyncActions';
-import { MessageParams } from '../../redux/Chat/types';
+import { MessageParams, UsersCheck } from '../../redux/Chat/types';
 import { selectChatData } from '../../redux/Chat/selectors';
 import Messages from '../../components/messages/Messages';
-import reactStringReplace from 'react-string-replace';
-
-type MessageProps = {
-    userName: string,
-    chatName: string,
-    message: string,
-    dateWrite: string,
-    pathPhoto: string
-}
 
 const Main = () => {
     const pathSmiles = [1,2,3,4,5,6,7,8,9];
@@ -39,6 +30,7 @@ const Main = () => {
         mode: 'onChange'
     });
     
+    const [ users, setUsers] = useState<UsersCheck[]>([]);
     const [ idMessage, setIdMessage] = useState(1);
     const [ connection, setConnection ] = useState<HubConnection>();
     const [text, setText] = useState('');
@@ -75,7 +67,7 @@ const Main = () => {
         await dispatch(fetchGetChat({chatId: Number(params.id)}));
         await dispatch(fetchUsersInChat({chatId: Number(params.id)}));
     }
-
+    
     useEffect(() => {
         getMessages();
     }, [statusDeleteMessage, statusChatMes, statusEnterChat]);
@@ -107,6 +99,14 @@ const Main = () => {
                             }, 2000);
                             return () => clearTimeout(timer);
                         }
+                    });
+                })
+                .then(() => {
+                    connection.invoke('UsersConnectedAsync', 'chat' + params.id);
+                })
+                .then(() => {
+                    connection.on('SendCheckUsers', message => {
+                        setUsers(message);
                     });
                 })
                 .then(() => {
@@ -206,7 +206,7 @@ const Main = () => {
                 <div className={cl.panel__all} onClick={() => setWatchAll(!watchAll)}>{watchAll ? '⛌' : 'Watch all'}</div>
             </div>
             <div className="container">
-                {(windowWidth > 670 || watchAll) && <Menu items={usersChat}/>}
+                {(windowWidth > 670 || watchAll) && <Menu users={users} items={usersChat}/>}
                 {(!watchAll || windowWidth > 670) && <div className={cl.container}>
                     <div className={cl.messages}>
                         <Messages {...chatik} />
