@@ -1,5 +1,5 @@
 export enum TypeButton {
-    submit = 'submit',
-    reset = 'reset',
-    button = 'button',
+  submit = "submit",
+  reset = "reset",
+  button = "button",
 }

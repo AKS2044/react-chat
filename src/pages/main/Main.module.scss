@@ -1,44 +1,44 @@
 @import "/src/colors";
 
-.main{
-    display: flex;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
-    &__left{
-        margin-left: 50px;
-        width: 50vw;
-        text-align: center;
-        &__line{
-            height: 1px;
-            margin-bottom: 15px;
-            width: 100%;
-            background-color: $header;
-        }
-        &__btns{
-            display: flex;
-            justify-content: space-around;
-            &__btn{
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border: 1px solid $color2__hover;
-                background-color: $color2;
-                color: $text;
-                outline: none;
-                border-radius: 6px;
-                font-size: 1.3rem;
-                height: 40px;
-                width: 49%;
-                &:hover{
-                    background-color: $color2__hover;
-                }
-            }
-        }
-        &__title{
-            font-weight: 700;
-            font-size: 3rem;
-            margin-bottom: 30px;
-        }
+.main {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  &__left {
+    margin-left: 50px;
+    width: 50vw;
+    text-align: center;
+    &__line {
+      height: 1px;
+      margin-bottom: 15px;
+      width: 100%;
+      background-color: $header;
     }
+    &__btns {
+      display: flex;
+      justify-content: space-around;
+      &__btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid $color2__hover;
+        background-color: $color2;
+        color: $text;
+        outline: none;
+        border-radius: 6px;
+        font-size: 1.3rem;
+        height: 40px;
+        width: 49%;
+        &:hover {
+          background-color: $color2__hover;
+        }
+      }
+    }
+    &__title {
+      font-weight: 700;
+      font-size: 3rem;
+      margin-bottom: 30px;
+    }
+  }
 }

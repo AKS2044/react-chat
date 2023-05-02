@@ -1,23 +1,23 @@
 @import "/src/colors";
 
-.button{
-    width: 100px;
-    height: 40px;
-    border-radius: 12px;
-    font-size: 1rem;
-    cursor: pointer;
-    background-color: $background;
-    border-color: $color2__hover;
-    color: white;
-    &:hover{
-        background-color: $header;
-        transform: scale(1.1);
-        transition: all 0.2s linear;
-    }
-    &:disabled{
-        background-color: $color2__hover;
-    }
-    @media (max-width: 870px) {
-        width: 80px;
-    }
+.button {
+  width: 100px;
+  height: 40px;
+  border-radius: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: $background;
+  border-color: $color2__hover;
+  color: white;
+  &:hover {
+    background-color: $header;
+    transform: scale(1.1);
+    transition: all 0.2s linear;
+  }
+  &:disabled {
+    background-color: $color2__hover;
+  }
+  @media (max-width: 870px) {
+    width: 80px;
+  }
 }

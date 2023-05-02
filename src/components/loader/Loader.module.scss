@@ -1,32 +1,35 @@
 @import "/src/colors";
 
-.loader{
-    width: 100vw;
-    height: 100vh;
+.loader {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $background;
+  position: absolute;
+  z-index: 1000;
+
+  &__text {
+    font-size: 2rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: $background;
-    position: absolute;
-    z-index: 1000;
-    &__text{
-        font-size: 2rem;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        animation: loader 1s linear infinite alternate;
-        background-color: #1f1e2c;
-        width: 300px;
-        height: 100px;
+    animation: loader 1s linear infinite alternate;
+    background-color: #1f1e2c;
+    width: 300px;
+    height: 100px;
+  }
+
+  @keyframes loader {
+    from {
+      background-color: #1f1e2c;
+      color: white;
     }
-    @keyframes loader {
-        from {
-            background-color: #1f1e2c;
-            color: white;  
-        }
-        to {
-            background-color: white;
-            color: #1f1e2c;  
-        }
+
+    to {
+      background-color: white;
+      color: #1f1e2c;
     }
+  }
 }

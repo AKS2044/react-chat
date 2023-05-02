@@ -1,66 +1,67 @@
 @import "/src/colors";
 
-.menu{
-    padding-top: 60px;
-    width: 20vw;
+.menu {
+  width: 20vw;
+  @media (max-width: 1000px) {
+    min-width: 200px;
+  }
+  @media (max-width: 670px) {
+    padding-top: 0;
+    border-right: none;
+    position: fixed;
+    z-index: 50;
+    width: 100vw;
     height: 100vh;
+    background-color: $color2;
+  }
+  &__items {
+    position: fixed;
+    padding-bottom: 60px;
+    z-index: 0;
+    width: 20%;
+    height: 100vh;
+    overflow-y: auto;
     @media (max-width: 1000px) {
-        min-width: 200px;
+      min-width: 200px;
     }
     @media (max-width: 670px) {
-        border-right: none;
-        position: fixed;
-        margin-top: 80px;
-        z-index: 50;
-        width: 100vw;
-        height: 100vh;
-        background-color: $color2;
+      padding-bottom: 80px;
+      border-right: none;
+      width: 100vw;
     }
-    &__items{
-        position: fixed;
-        z-index: 0;
-        width: 20%;
-        overflow-y: hidden;
-        @media (max-width: 1000px) {
-            min-width: 200px;
-        }
-        @media (max-width: 670px) {
-            border-right: none;
-            width: 100vw;
-        }
-        &__online{
-            color:#1bc618;
-            font-size: 0.8rem;
-            font-weight: 300;
-        }
-        &__offline{
-            opacity: 0.5;
-            font-size: 0.7rem;
-            font-weight: 300;
-        }
-        &__person{
-            min-height: 60px;
-            padding: 0 5px;
-            margin-bottom: 1px;
-            display: flex;
-            align-items: center;
-            background-color: $color2;
-            @media (max-width: 670px) {
-                border-bottom: 1px solid $background;
-            }
-            &:hover{
-                background-color: $color2__hover;
-            }
-            &__photo{
-                border-radius: 50%;
-                border: 2px solid $header;
-                width: 48px;
-                height: 48px;
-                margin-right: 10px;
-            }
-            &__nick{
-                font-size: 1.2rem;
-            }
-        }
+    &__online {
+      color: #1bc618;
+      font-size: 0.8rem;
+      font-weight: 300;
     }
+    &__offline {
+      opacity: 0.5;
+      font-size: 0.7rem;
+      font-weight: 300;
+    }
+    &__person {
+      min-height: 60px;
+      padding: 0 5px;
+      margin-bottom: 1px;
+      display: flex;
+      align-items: center;
+      background-color: $color2;
+      @media (max-width: 670px) {
+        border-bottom: 1px solid $background;
+      }
+      &:hover {
+        background-color: $color2__hover;
+      }
+      &__photo {
+        border-radius: 50%;
+        border: 2px solid $header;
+        width: 48px;
+        height: 48px;
+        margin-right: 10px;
+      }
+      &__nick {
+        font-size: 1.2rem;
+      }
+    }
+  }
 }
