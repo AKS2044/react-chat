@@ -172,8 +172,8 @@ const Profile = () => {
             </div>
           )}
           <div className={cl.search}>
-            <div className={cl.search__block}>
-              <div className={cl.search__block__title}>
+            <div className={cl.search__header}>
+              <div className={cl.search__header__title}>
                 {params.user ? profile.userName + " chats" : "My chats"}
               </div>
               {!whoseProfile && (
@@ -185,13 +185,13 @@ const Profile = () => {
                       onChangeInput(e, setSearch)
                     }
                     placeholder="Search..."
-                    className={cl.search__block__input}
+                    className={cl.search__header__input}
                   />
                   {search && (
                     <span
                       title="Clear"
                       onClick={() => onClickClear(searchRef, setSearch)}
-                      className={cl.search__block__input__clear}
+                      className={cl.search__header__input__clear}
                     >
                       ⛌
                     </span>
@@ -199,7 +199,7 @@ const Profile = () => {
                 </div>
               )}
             </div>
-            <div className={cl.search}>
+            <div className={cl.search__block}>
               {search ? (
                 <>
                   {statusSearchChat === "completed" &&

@@ -3,7 +3,6 @@
 .container {
   width: 80vw;
   position: relative;
-  border-left: 1px solid $header;
   @media (max-width: 1000px) {
     width: 100vw;
   }

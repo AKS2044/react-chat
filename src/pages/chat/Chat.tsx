@@ -266,9 +266,9 @@ const Main = () => {
                           />
                         ) : (
                           <div className={cl.text__block__emojies}>
-                            {pathSmiles.map((n, i) => (
+                            {pathSmiles.map((n) => (
                               <img
-                                key={i}
+                                key={n}
                                 className={cl.text__block__emojies__emoji}
                                 alt="smile"
                                 src={`/assets/smiles/smile${n}.png`}

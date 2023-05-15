@@ -21,6 +21,7 @@
     width: 20%;
     height: 100vh;
     overflow-y: auto;
+    border-right: 1px solid #f47b7b;
     @media (max-width: 1000px) {
       min-width: 200px;
     }
