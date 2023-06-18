@@ -23,7 +23,6 @@ const Messages: React.FC<MessageParams[]> = (messages) => {
       window.scrollTo(0, clientHeight);
     }
   }, [messages]);
-
   return (
     <div ref={messageRef}>
       {Object.values(messages).map((m, i) => (

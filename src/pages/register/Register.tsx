@@ -16,8 +16,7 @@ const Register = () => {
   const isAuth = useSelector(selectIsAuth);
   const dispatch = useAppDispatch();
   const formData = new FormData();
-  const { data, statusRegister, error, urlPhoto, uploadPhotoStatus } =
-    useSelector(selectLoginData);
+  const { data, statusRegister, error } = useSelector(selectLoginData);
 
   const {
     register,
@@ -37,6 +36,7 @@ const Register = () => {
   const handleChangeFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
       const file = e.target.files![0];
+      console.log(file.arrayBuffer);
       formData.append("file", file);
     } catch (err) {
       console.log(err);

@@ -14,7 +14,6 @@ type MenuProps = {
 };
 
 const Menu: React.FC<MenuProps> = (props) => {
-  console.log(props.users);
   return (
     <div className={cl.menu}>
       <div className={cl.menu__items}>

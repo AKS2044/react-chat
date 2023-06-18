@@ -86,14 +86,16 @@
       align-items: center;
       justify-content: center;
       height: 30px;
+      margin-top: 5px;
       width: 100%;
       color: $text;
       font-size: 1rem;
-      border-width: 0 1px 1px 1px;
+      border-width: 1px;
       border-style: solid;
       border-color: $header;
       background-color: $background2;
       outline: none;
+      cursor: pointer;
       &:hover {
         transition: all linear 0.2s;
         background-color: $header;
@@ -209,9 +211,15 @@
         background-color: $color2__hover;
       }
       &__photo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-transform: uppercase;
         border: 2px solid #f47b7b;
         border-radius: 50%;
+        background-color: #f47b7b32;
         width: 48px;
+        height: 48px;
         @media (max-width: 510px) {
           width: 32px;
         }

@@ -55,6 +55,7 @@ const Main = () => {
     statusEnterChat,
     statusChatMes,
   } = useSelector(selectChatData);
+
   const dateNow = Date.now();
   const date = new Date(dateNow);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -169,15 +170,10 @@ const Main = () => {
   };
 
   const onSubmit = async () => {
-    const last = chatik.length
-      ? chatik[chatik.length - 1]
-      : messages[messages.length - 1];
-
     const message: MessageParams = {
-      id: last.id + 1,
+      id: 1,
       chatId: Number(params?.id),
       userName: data.userName,
-      chatName: chat.nameChat,
       message: text,
       dateWrite: date.toLocaleTimeString(),
       pathPhoto: data.pathPhoto,

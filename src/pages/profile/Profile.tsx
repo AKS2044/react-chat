@@ -4,7 +4,10 @@ import { Link, Navigate, useLocation, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectIsAuth, selectLoginData } from "../../redux/Auth/selectors";
 import { useEffect, useRef, useState } from "react";
-import { fetchGetProfile } from "../../redux/Auth/asyncActions";
+import {
+  fetchGetProfile,
+  fetchUploadPhoto,
+} from "../../redux/Auth/asyncActions";
 import { useAppDispatch } from "../../redux/store";
 import Loader from "../../components/loader/Loader";
 import {
@@ -20,9 +23,11 @@ import { selectChatData } from "../../redux/Chat/selectors";
 const Profile = () => {
   const [search, setSearch] = useState("");
   const searchRef = useRef<HTMLInputElement>(null);
+  const inputFileRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
   const isAuth = useSelector(selectIsAuth);
   const location = useLocation();
+  const formData = new FormData();
   const params = useParams();
   const whoseProfile = Boolean(params.user);
   const fromPage = location.state?.from?.pathname || "/login";
@@ -70,8 +75,8 @@ const Profile = () => {
     }
   };
 
-  const searchChatAsync = async (chatName: string) => {
-    await dispatch(fetchSearchChat({ chatName }));
+  const searchChatAsync = async () => {
+    await dispatch(fetchSearchChat({ chatName: search }));
   };
 
   const onChangeInput = (
@@ -95,9 +100,23 @@ const Profile = () => {
 
   useEffect(() => {
     if (search) {
-      searchChatAsync(search);
+      searchChatAsync();
     }
   }, [search]);
+
+  const handleChangeFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const file = e.target.files![0];
+      console.log(file.arrayBuffer);
+      formData.append("file", file);
+
+      if (formData.get("file")) {
+        await dispatch(fetchUploadPhoto(formData));
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   if (
     params.user &&
@@ -169,6 +188,21 @@ const Profile = () => {
               <Link to="/" className={cl.profile__block__main}>
                 Main
               </Link>
+              <div
+                onClick={() => inputFileRef.current?.click()}
+                className={cl.profile__block__main}
+              >
+                Change photo
+              </div>
+              <input
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  handleChangeFile(e)
+                }
+                type="file"
+                accept="image/*, .png, .jpg, .web"
+                ref={inputFileRef}
+                hidden
+              />
             </div>
           )}
           <div className={cl.search}>
@@ -243,11 +277,9 @@ const Profile = () => {
                           to={`/${c.id}`}
                           className={cl.search__items__item}
                         >
-                          <img
-                            src={photo}
-                            alt="Avatar"
-                            className={cl.search__items__item__photo}
-                          />
+                          <div className={cl.search__items__item__photo}>
+                            {c.nameChat[0] + c.nameChat[c.nameChat.length - 1]}
+                          </div>
                           <div className={cl.search__items__item__text}>
                             {c.nameChat}
                           </div>

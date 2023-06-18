@@ -5,7 +5,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
-    "@microsoft/signalr": "^7.0.3",
+    "@microsoft/signalr": "^7.0.7",
     "@mui/material": "^5.11.11",
     "@reduxjs/toolkit": "^1.9.2",
     "@testing-library/jest-dom": "^5.16.5",
